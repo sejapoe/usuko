@@ -2,13 +2,33 @@
 <html>
 
 <head>
+
+    <meta charset="UTF-8">
+    <meta name="description" content="Секретная разработка">
+
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 
-<body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %>, how are u?</p>
+<body id="top">
+    <header class="header">
+        <div>
+            <h1><%= title %></h1>
+        </div>
+    </header>
+
+    <div id="body">
+        <%for(let i = 0; i < 30; i++) {%>
+        хуйня<br>
+        <%}%>
+    </div>
+
+
+    <footer>
+        <a href="/">УСУКО</a>
+        &copy;
+        2020 Евгений Бекалдиев
+    </footer>
 </body>
 
 </html>
