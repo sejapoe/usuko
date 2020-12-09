@@ -12,15 +12,26 @@
 
 <body id="top">
     <header class="header">
-        <div>
-            <h1><%= title %></h1>
+        <div id="center" style="font-size: 2.5em;">
+            <%= title %>
+        </div>
+        <div id="right">
+            <a href="/auth" id="login">Войти</a>
         </div>
     </header>
 
     <div id="body">
-        <%for(let i = 0; i < 30; i++) {%>
-        хуйня<br>
-        <%}%>
+        <div style="align-items: flex-start; flex: 0 1 150px; display: flex;">
+            <img src="/images/ultimate-shark.gif" style="margin-left:7.8%;">
+            <div style="text-align: left; margin: auto; font-size: 2.7em; margin-left: 7%;">
+                УСУКО это: <br>
+                У - Усовершествованная<br>
+                С - Система<br>
+                У - Универсального<br>
+                К - Контрольного<br>
+                О - Оценивания<br>
+            </div>
+        </div>
     </div>
 
 
