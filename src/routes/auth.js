@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('auth');
+    res.render('auth', { title: 'УСУКО МБОУ СОШ №28' });
 });
 
 module.exports = router;
