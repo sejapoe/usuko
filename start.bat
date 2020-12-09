@@ -1,0 +1,1 @@
+set DEBUG=site:* & npm start
