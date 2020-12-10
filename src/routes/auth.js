@@ -8,10 +8,17 @@ router.get('/', function (req, res, next) {
 });
 
 /* POST auth page */
-// TODO: Add error message when invalid passport
-router.post('/', passport.authenticate('local', {
-    successRedirect: '/user',
-    failureRedirect: '/auth',
-}));
+router.post('/', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            return res.render("auth", { title: 'УСУКО МБОУ СОШ №28', error: "Неверный логин или пароль" });
+        }
+        req.logIn(user, (err) => {
+            if (err) console.error(err);
+            return res.redirect('/user');
+        });
+    })(req, res, next);
+});
 
 module.exports = router;
