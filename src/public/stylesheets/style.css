@@ -145,3 +145,63 @@ form.auth span.pass {
         width: 100%;
     }
 }
+
+#body.adminlk {
+    display: flex;
+    justify-content: flex-start;
+    min-height: 300px;
+}
+
+.actionlist {
+    width: 15%;
+    margin-left: 1%;
+    min-height: 300px;
+    border: 1px solid #ccc;
+}
+
+.actionlistitem {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.actionlist a {
+    text-decoration: none;
+    color: lightgrey;
+}
+
+.actionfield {
+    border: 1px solid #ccc;
+    width: 83%;
+    min-height: 300px;
+}
+
+.actionfield table {
+    font-size: 18px;
+}
+
+.actionfield th, td {
+    border: 0.5px solid #ccc
+}
+
+.actionfield td.forinput {
+    padding: 0%;
+}
+
+.actionfield input.add {
+    background-image: linear-gradient(-180deg, rgb(83, 86, 89) 0%, rgb(66, 69, 73) 90%) !important;
+    width: 100%;
+    height: 53px;
+    padding: 0%;
+    font-size: 18px;
+    /* margin: 8px 0; */
+    color: lightgray;
+    display: inline-block;
+    border: 1px solid rgb(41, 41, 41);
+    box-sizing: border-box;
+}
