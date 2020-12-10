@@ -65,3 +65,6 @@ typings/
 
 # TODO
 todo.txt
+
+# local settings
+settings.json

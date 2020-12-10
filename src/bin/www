@@ -7,6 +7,16 @@
 const app = require('../app');
 const debug = require('debug')('site:server');
 const http = require('http');
+const { existsSync } = require('fs');
+
+/**
+ * Applying local settings
+ */
+try {
+    process.env = require("../../settings.json");
+} catch (e) {
+
+};
 
 /**
  * Get port from environment and store in Express.
