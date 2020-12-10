@@ -1,24 +1,29 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
-class Connection {
-    constructor() {
-        this.connection = mysql.createConnection({
-            host: process.env.mysql_host,
-            database: process.env.mysql_database,
-            user: process.env.mysql_user,
-            password: process.env.mysql_password
-        });
+/**
+ * Loading settings
+ */
+// TODO: Try make easier
+try {
+    settings = require('../settings.json');
+} catch (e) {
+    settings = process.env;
+}
 
-        this.connection.connect(() => {
-            console.log(`[MYSQL] Successfully connected`);
-        });
+/**
+ * Creating pool with max connections 5
+ */
+const pool = mysql.createPool({
+    connectionLimit: 5,
+    host: settings.mysql_host,
+    database: settings.mysql_database,
+    user: settings.mysql_user,
+    password: settings.mysql_password
+});
 
-        this.connection.on("error", console.error);
-    }
-
-    query(str, callback = {}) {
-        this.connection.query(str, callback);
-    }
+/**
+ * Making external query
+ */
+module.exports.query = (str, callback) => {
+    pool.query(str, callback);
 };
-
-module.exports = Connection;
