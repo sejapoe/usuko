@@ -12,6 +12,12 @@ class Connection {
         this.connection.connect(() => {
             console.log(`[MYSQL] Successfully connected`);
         });
+
+        this.connection.on("error", console.error);
+    }
+
+    query(str, callback = {}) {
+        this.connection.query(str, callback);
     }
 };
 

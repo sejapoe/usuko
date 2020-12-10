@@ -10,7 +10,6 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 const app = express();
-const connection = new Connection();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // mysql connection
 app.use((req, res, next) => {
-    req.database = connection;
+    req.database = new Connection();
     next();
 });
 
