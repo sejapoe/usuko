@@ -193,7 +193,7 @@ form.auth span.pass {
     padding: 0%;
 }
 
-.actionfield input.add {
+.actionfield input.add, input.edit {
     background-image: linear-gradient(-180deg, rgb(83, 86, 89) 0%, rgb(66, 69, 73) 90%) !important;
     width: 100%;
     height: 53px;
@@ -201,7 +201,6 @@ form.auth span.pass {
     font-size: 18px;
     /* margin: 8px 0; */
     color: lightgray;
-    display: inline-block;
     border: 1px solid rgb(41, 41, 41);
     box-sizing: border-box;
 }

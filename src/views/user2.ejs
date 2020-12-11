@@ -4,17 +4,18 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+    <meta charset="UTF-8" />
+    <meta name="description" content="Секретная разработка" />
 
-    <meta charset="UTF-8">
-    <meta name="description" content="Секретная разработка">
-
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
 </head>
 
 <body id="top">
     <header class="header">
-        <div id="center" style="font-size: 2.5em;">
+        <div id="center" style="font-size: 2.5em">
             <%= title %>
         </div>
         <div id="right">
@@ -22,104 +23,190 @@
         </div>
     </header>
 
-
-
     <div id="body" class="adminlk">
         <div class="actionlist" style="height: <%=type == 1 ? 121.11 + table.length * 60 : 300 %>px;">
             <a href="/user?type=1">
-                <div class="actionlistitem">
-                    Управление учителями
-                </div>
+                <div class="actionlistitem">Управление учителями</div>
             </a>
             <a href="/user?type=2">
-                <div class="actionlistitem">
-                    Управление классами
-                </div>
+                <div class="actionlistitem">Управление классами</div>
             </a>
             <a href="/user?type=3">
-                <div class="actionlistitem">
-                    Управление аккаунтами
-                </div>
+                <div class="actionlistitem">Управление аккаунтами</div>
             </a>
         </div>
         <div class="actionfield">
-            <%if(type == 1) {%>
+            <%if(type==1) {%>
 
-            <table cellpadding="5" style="width: 100%">
-                <form id="form_teachers_table" method="POST">
-                    <tr>
-                        <th style="width: 2.5%;"><input type="checkbox" name="cb_teachers_all" id="cb_teachers_all">
-                        </th>
-                        <th style="width: 7.8%">
-                            <a href="javascript:{}" onclick="document.getElementById('form_teachers_table').submit();"
-                                name="classes_selected"><img src="/images/classes.png" draggable="false"
-                                    style="width: 40px; height: 40px; margin-bottom: 2px;"></a>
-                            <a href="javascript:{}" onclick="
+                <table cellpadding="5" style="width: 100%">
+                    <form id="form_teachers_table" name="form_teachers_table" method="POST">
+                        <tr>
+                            <th style="width: 2.5%">
+                                <input type="checkbox" name="cb_teachers_all" id="cb_teachers_all" />
+                            </th>
+                            <th style="width: 7.8%">
+                                <a href="javascript:{}"
+                                    onclick="document.getElementById('form_teachers_table').submit();"
+                                    name="classes_selected"><img src="/images/classes.png" draggable="false"
+                                        style="width: 40px; height: 40px; margin-bottom: 2px" /></a>
+                                <a href="javascript:{}" onclick="
                                 document.getElementById('form_teachers_table').setAttribute('action', '/user/editteachers');
                                 document.getElementById('form_teachers_table').submit();" name="edit_selected"><img
-                                    src="/images/edit.png" draggable="false" style="width: 40px; height: 40px;"></a>
-                            <a href="javascript:{}" onclick="
+                                        src="/images/edit.png" draggable="false"
+                                        style="width: 40px; height: 40px" /></a>
+                                <a href="javascript:{}" onclick="
                                 document.getElementById('form_teachers_table').setAttribute('action', '/user/removeteachers');
                                 document.getElementById('form_teachers_table').submit();" name="delete_selected"><img
-                                    src="/images/delete.png" draggable="false"
-                                    style="width: 40px; height: 40px; margin-bottom: 0.5px;"></a>
-                        </th>
-                        <th style="width: 2.5%;">ID</th>
-                        <th style="width: 18.2%;">ФИО</th>
-                        <th style="width: 23.4%;">Предмет</th>
-                        <th style="width: 14.3%;">Логин</th>
-                        <th style="width: 14.3%;">Пароль</th>
-                    </tr>
-                    <%for(let i = 0; i < table.length; i++) {%>
-                    <tr>
-                        <td><input type="checkbox" name="teacher_<%=table[i].id%>" id="cb_teacher_<%=table[i].id%>">
-                        </td>
-                        <td>
-                            <a href="/user?type=2&filter=<%=table[i].id%>"><img src="/images/classes.png"
-                                    draggable="false" style="width: 40px; height: 40px; margin-bottom: 2px;"></a>
-                            <a href="/user/editteacher?<%=table[i].id%>=on"><img src="/images/edit.png"
-                                    draggable="false" style="width: 40px; height: 40px;"></a>
-                            <a href="/user/removeteacher?<%=table[i].id%>=on"><img src="/images/delete.png"
-                                    draggable="false" style="width: 40px; height: 40px; margin-bottom: 0.5px;"></a>
-                        </td>
-                        <td><%=table[i].id%></td>
-                        <td><%=table[i].fullname%></td>
-                        <td><%=table[i].subject%></td>
-                        <td><%=table[i].login%></td>
-                        <td><%=table[i].password%></td>
-                    </tr>
-                    <%}%>
-                </form>
-                <form id="form_teacher_add" action="/user/addteacher" method="POST">
-                    <tr>
-                        <td></td>
-                        <td>
-                            <a href="javascript:{}" onclick="document.getElementById('form_teacher_add').submit();" name="add_teacher"><img src="/images/add.png"
-                            draggable="false" style="width: 40px; height: 40px;"></a>
-                        </td>
-                        <td></td>
-                        <td class="forinput"><input type="text" class="add" name="fullname"></td>
-                        <td class="forinput"><input type="text" class="add" name="subject"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </form>
-            </table>
-            <%}%>
+                                        src="/images/delete.png" draggable="false"
+                                        style="width: 40px; height: 40px; margin-bottom: 0.5px" /></a>
+                            </th>
+                            <th style="width: 2.5%">ID</th>
+                            <th style="width: 18.2%">ФИО</th>
+                            <th style="width: 23.4%">Предмет</th>
+                            <th style="width: 14.3%">Логин</th>
+                            <th style="width: 14.3%">Пароль</th>
+                        </tr>
+                        <%for(let i=0; i < table.length; i++) {%>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="teacher_<%=table[i].id%>"
+                                        id="cb_teacher_<%=table[i].id%>" />
+                                </td>
+                                <td id="actions_<%=table[i].id%>">
+                                    <a href="/user?type=2&filter=<%=table[i].id%>"><img src="/images/classes.png"
+                                            draggable="false"
+                                            style="width: 40px; height: 40px; margin-bottom: 2px" /></a>
+                                    <a href="javascrpt:{}" onclick="editTeacher(<%=table[i].id%>)"><img
+                                            src="/images/edit.png" draggable="false"
+                                            style="width: 40px; height: 40px" /></a>
+                                    <a href="/user/removeteacher?<%=table[i].id%>=on"><img src="/images/delete.png"
+                                            draggable="false"
+                                            style="width: 40px; height: 40px; margin-bottom: 0.5px" /></a>
+                                </td>
+                                <td>
+                                    <%=table[i].id%>
+                                </td>
+                                <td id="fullname_<%=table[i].id%>">
+                                    <%=table[i].fullname%>
+                                        <input type="text" class="edit" name="fullnameedit_<%=table[i].id%>" hidden />
+                                </td>
+                                <td id="subject_<%=table[i].id%>">
+                                    <%=table[i].subject%>
+                                        <input type="text" class="edit" name="subjectedit_<%=table[i].id%>" hidden />
+                                </td>
+                                <td>
+                                    <%=table[i].login%>
+                                </td>
+                                <td>
+                                    <%=table[i].password%>
+                                </td>
+                            </tr>
+                            <%}%>
+                    </form>
+                    <form id="form_teacher_add" action="/user/addteacher" method="POST">
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a href="javascript:{}" onclick="document.getElementById('form_teacher_add').submit();"
+                                    name="add_teacher"><img src="/images/add.png" draggable="false"
+                                        style="width: 40px; height: 40px" /></a>
+                            </td>
+                            <td></td>
+                            <td class="forinput">
+                                <input type="text" class="add" name="fullname" />
+                            </td>
+                            <td class="forinput">
+                                <input type="text" class="add" name="subject" />
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </form>
+                </table>
+                <%}%>
         </div>
     </div>
 
-
     <footer>
         <a href="/">УСУКО</a>
-        &copy;
-        2020 Евгений Бекалдиев
+        &copy; 2020 Евгений Бекалдиев
     </footer>
 
     <script>
         $("input#cb_teachers_all").change(function () {
-            $('input[name^="teacher_"]').prop("checked", $("input#cb_teachers_all").prop("checked"));
-        })
+            $('input[name^="teacher_"]').prop(
+                "checked",
+                $("input#cb_teachers_all").prop("checked")
+            );
+        });
+    </script>
+
+    <script>
+        function editTeacher(id) {
+            const form = document.forms.namedItem("form_teachers_table");
+
+            const fullname = document.getElementById(`fullname_${id}`);
+            const fullnameinput = fullname.firstElementChild;
+            const prevfullname = fullname.textContent.trim();
+            fullname.firstChild.textContent = "";
+            fullnameinput.value = prevfullname;
+            fullnameinput.hidden = false;
+            fullname.classList.add("forinput");
+
+            const subject = document.getElementById(`subject_${id}`);
+            const subjectinput = subject.firstElementChild;
+            const prevsubject = subject.textContent.trim();
+            subject.firstChild.textContent = "";
+            subjectinput.value = prevsubject;
+            subjectinput.hidden = false;
+            subject.classList.add("forinput");
+
+            console.log(form.elements);
+
+            const actions = document.getElementById(`actions_${id}`).children;
+            actions[0].remove();
+            const apply = actions[0];
+            apply.setAttribute("href", `javascript:{}`);
+            apply.setAttribute(
+                "onclick",
+                `document.getElementById('form_teachers_table').setAttribute('action', '/user/editteacher?id=${id}');
+                                document.getElementById('form_teachers_table').submit();`
+            );
+            apply.children[0].setAttribute("src", "/images/apply.png");
+            const cancel = actions[1];
+            cancel.setAttribute("href", `javascript:{}`);
+            cancel.setAttribute(
+                "onclick",
+                `cancelEdit(${id}, '${prevfullname}', '${prevsubject}');`
+            );
+            cancel.children[0].setAttribute("src", "/images/cancel.png");
+        }
+
+        function cancelEdit(id, prevfullname, prevsubject) {
+            const fullname = document.getElementById(`fullname_${id}`);
+            const fullnameinput = fullname.children[0];
+            fullnameinput.hidden = true;
+            fullname.classList.remove("forinput");
+            fullname.innerHTML = prevfullname + fullname.innerHTML;
+
+            const subject = document.getElementById(`subject_${id}`);
+            const subjectinput = subject.children[0];
+            subjectinput.hidden = true;
+            subject.classList.remove("forinput");
+            subject.innerHTML = prevsubject + subject.innerHTML;
+
+            const actions = document.getElementById(`actions_${id}`);
+
+            actions.innerHTML = `<a href="/user?type=2&filter=${id}"><img src="/images/classes.png"
+                draggable="false"
+                style="width: 40px; height: 40px; margin-bottom: 2px;"></a>
+            <a href="javascrpt:{}" onclick="editTeacher(${id})"><img
+                    src="/images/edit.png" draggable="false"
+                    style="width: 40px; height: 40px;"></a>
+            <a href="/user/removeteacher?${id}>=on"><img src="/images/delete.png"
+                draggable="false"
+                style="width: 40px; height: 40px; margin-bottom: 0.5px;"></a>`;
+        }
     </script>
 </body>
 

@@ -72,6 +72,7 @@ router.post('/removeteachers', function (req, res, next) {
     }
 
     // if user hasn't permissions redirect to userpage
+    if (req.user.type != 2) return res.redirect('/user');
     const toremove = Object.keys(req.body).filter(str => str.startsWith("teacher_"));
     for (let i = 0; i < toremove.length; i++) {
         const id = toremove[i].split("_")[1];
@@ -92,6 +93,7 @@ router.post('/addteacher', function (req, res, next) {
     }
 
     // if user hasn't permissions redirect to userpage
+    if (req.user.type != 2) return res.redirect('/user');
     const fullname = req.body.fullname;
     const subject = req.body.subject;
     const login = utils.rus_to_latin(req.body.fullname.split(/ +/g)[0].toLowerCase());
@@ -101,6 +103,43 @@ router.post('/addteacher', function (req, res, next) {
         const id = (results.length == 0 ? 0 : results[results.length - 1].id + 1);
         connection.query(`INSERT INTO \`users\` (\`fullname\`, \`subject\`, \`login\`, \`password\`, \`type\`) VALUES ('${fullname}', '${subject}', '${login}_${id}', '${password}', 1)`);
         return res.redirect('/user?type=1');
+    });
+});
+
+/**
+ * handling edit teacher request
+ */
+router.post('/editteacher', function (req, res, next) {
+    // if user don't authorized redirect to login page
+    if (!req.user) {
+        return res.redirect('/auth');
+    }
+
+    // if user hasn't permissions redirect to userpage
+    if (req.user.type != 2) return res.redirect('/user');
+    const id = req.query.id;
+    const fullname = req.body[`fullnameedit_${id}`];
+    const subject = req.body[`subjectedit_${id}`];
+    connection.query(`SELECT * FROM \`users\` WHERE \`id\` = ${id}`, (err, results) => {
+        if (err) console.error(err);
+        let send = [];
+        if (fullname && fullname != results[0].fullname) {
+            send.push(`\`fullname\` = '${fullname}'`);
+            const login = utils.rus_to_latin(
+                fullname.split(/ +/g)[0].toLowerCase()
+            );
+            send.push(`\`login\` = '${login}_${id}'`);
+        }
+        if (subject && subject != results[0].subject) send.push(`\`subject\` = '${subject}'`);
+        if (send.length > 0) {
+            const sql = `UPDATE \`users\` SET ${send.join(', ')} WHERE \`id\` = ${id}`;
+            connection.query(sql, (err) => {
+                if (err) console.error(err);
+                return res.redirect('/user?type=1');
+            });
+        } else {
+            return res.redirect('/user?type=1');
+        }
     });
 });
 
