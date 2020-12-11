@@ -20,7 +20,6 @@ passport.use(new LocalStrategy({
                     type: results[0].type,
                     fullname: results[0].fullname
                 };
-                console.log("Storing user data", user);
                 return done(null, user);
             }
         });
