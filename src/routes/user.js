@@ -143,4 +143,6 @@ router.post('/editteacher', function (req, res, next) {
     });
 });
 
+// TODO: #1 Придумать куда засунуть кнопку сброса пароля
+
 module.exports = router;
