@@ -78,7 +78,9 @@ router.post('/removeteachers', function (req, res, next) {
         const id = toremove[i].split("_")[1];
         connection.query(`DELETE FROM \`users\` WHERE \`id\` = ${id}`, (err, results) => {
             if (err) return console.error(err);
-            return res.redirect('/user?type=1');
+            if (i == toremove.length - 1) {
+                return res.redirect('/user?type=1');
+            }
         });
     }
 });
