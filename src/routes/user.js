@@ -145,6 +145,25 @@ router.post('/editteacher', function (req, res, next) {
     });
 });
 
+/**
+ * reset password handler
+ */
+router.get('/resetpassword', (req, res, next) => {
+    // if user don't authorized redirect to login page
+    if (!req.user) {
+        return res.redirect('/auth');
+    }
+
+    // if user hasn't permissions redirect to userpage
+    if (req.user.type != 2) return res.redirect('/user');
+    const id = req.query.id;
+    const newPassword = utils.generatePassword();
+    connection.query(`UPDATE \`users\` SET \`password\` = '${newPassword}' WHERE \`id\` = ${id}`, (err) => {
+        if (err) return console.error(err);
+        return res.redirect('/user?type=1');
+    });
+})
+
 // TODO: #1 Придумать куда засунуть кнопку сброса пароля
 
 module.exports = router;

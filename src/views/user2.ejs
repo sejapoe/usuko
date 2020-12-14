@@ -164,9 +164,9 @@
             console.log(form.elements);
 
             const actions = document.getElementById(`actions_${id}`).children;
-            actions[0].remove();
             const apply = actions[0];
             apply.setAttribute("href", `javascript:{}`);
+            apply.setAttribute("title", "Применить");
             apply.setAttribute(
                 "onclick",
                 `document.getElementById('form_teachers_table').setAttribute('action', '/user/editteacher?id=${id}');
@@ -177,12 +177,19 @@
 
             const cancel = actions[1];
             cancel.setAttribute("href", `javascript:{}`);
+            cancel.setAttribute("title", "Отмена");
             cancel.setAttribute(
                 "onclick",
                 `cancelEdit(${id}, '${prevfullname}', '${prevsubject}');`
             );
             cancel.children[0].setAttribute("src", "/images/cancel.png");
             cancel.children[0].setAttribute("style", "width: 40px; height: 40px; margin-bottom: 1.5px;");
+
+            const refresh = actions[2];
+            refresh.setAttribute("href", `/user/resetpassword?id=${id}`);
+            refresh.setAttribute("title", "Сгенерировать новый пароль");
+            refresh.children[0].setAttribute("src", "/images/refresh.png");
+            refresh.children[0].setAttribute("style", "width: 40px; height: 40px; margin-bottom: 1.5px;");
         }
 
         function cancelEdit(id, prevfullname, prevsubject) {
