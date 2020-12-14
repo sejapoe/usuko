@@ -173,6 +173,8 @@
                                 document.getElementById('form_teachers_table').submit();`
             );
             apply.children[0].setAttribute("src", "/images/apply.png");
+            apply.children[0].setAttribute("style", "width: 40px; height: 40px;");
+
             const cancel = actions[1];
             cancel.setAttribute("href", `javascript:{}`);
             cancel.setAttribute(
@@ -180,6 +182,7 @@
                 `cancelEdit(${id}, '${prevfullname}', '${prevsubject}');`
             );
             cancel.children[0].setAttribute("src", "/images/cancel.png");
+            cancel.children[0].setAttribute("style", "width: 40px; height: 40px; margin-bottom: 1.5px;");
         }
 
         function cancelEdit(id, prevfullname, prevsubject) {
