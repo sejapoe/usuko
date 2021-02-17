@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 // import Home from '../views/Home.vue';
 import Login from '@/views/Login.vue';
+import Profile from '@/views/Profile.vue';
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,12 @@ const routes: Array<RouteConfig> = [
     path: '/login',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    children: [{ path: 'foo' }, { path: 'bar' }, { path: 'baz' }],
   },
 ];
 

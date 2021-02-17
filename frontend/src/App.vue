@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header :user="user" @update="init" />
-    <router-view @update="init" />
+    <router-view @update="init" :user="user" />
   </div>
 </template>
 

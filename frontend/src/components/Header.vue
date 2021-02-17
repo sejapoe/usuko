@@ -10,6 +10,9 @@
           <template #button-content>
             {{ user.username }}
           </template>
+          <b-dropdown-item to="/profile">
+            Профиль
+          </b-dropdown-item>
           <b-dropdown-item @click="logout">
             Выйти
           </b-dropdown-item>
@@ -21,19 +24,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IUser } from '../services/interfaces';
 import { logout } from '../services/utils';
 
-const HeaderProps = Vue.extend({
-  props: {
-    user: {
-      type: Object,
-    },
-  },
-});
-
 @Component
-export default class Header extends HeaderProps {
+export default class Header extends Vue {
+  @Prop(Object) user: IUser;
+
   logout() {
     logout().then(response => {
       if (response.ok) {

@@ -3,9 +3,17 @@ import bcrypt from 'bcrypt';
 
 const SALT_WORK_FACTOR = 10;
 
+export enum EAccountType {
+  Student = 0,
+  Teacher = 1,
+  HeadTeacher = 2,
+  Admin = 3,
+}
+
 export interface IUser extends Document {
   username: string;
   password: string;
+  accountType: EAccountType;
   comparePasswords(candidatePassword: string): boolean;
 }
 
@@ -13,6 +21,11 @@ export const UserSchema = new Schema<IUser>(
   {
     username: { type: String, required: true },
     password: { type: String, required: true },
+    accountType: {
+      type: String,
+      default: EAccountType.Student,
+      enum: Object.values(EAccountType),
+    },
   },
   {
     versionKey: false,
