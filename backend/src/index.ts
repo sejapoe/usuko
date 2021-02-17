@@ -6,6 +6,11 @@ import session from 'express-session';
 import mongoose from 'mongoose';
 import path from 'path';
 
+import './passport';
+
+import UserRouter from './routes/user';
+import AuthRouter from './routes/auth';
+
 const app = express();
 
 const PORT = 3080;
@@ -31,9 +36,8 @@ app.use(passport.session());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
-app.get('/', function (req, res) {
-  res.sendStatus(200);
-});
+app.use('/api/user', UserRouter);
+app.use('/api/auth', AuthRouter);
 
 app.listen(PORT, () => {
   console.log(`Server isn't running at ::${PORT}`);
