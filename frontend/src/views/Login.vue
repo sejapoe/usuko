@@ -11,7 +11,13 @@
               <b-form-input id="input-1" v-model="form.username" type="text" placeholder="Введите логин" required />
             </b-form-group>
 
-            <b-form-group id="input-group-2" label="Пароль" label-for="input-2">
+            <b-form-group
+              id="input-group-2"
+              label="Пароль"
+              label-for="input-2"
+              invalid-feedback="Неверный логин или пароль"
+              :state="!wrongLoginOrPassword"
+            >
               <b-form-input
                 id="input-2"
                 v-model="form.password"
@@ -21,7 +27,7 @@
               />
             </b-form-group>
 
-            <b-button type="submit" variant="dark" class="col-12">
+            <b-button type="submit" variant="dark" block>
               Войти
             </b-button>
 
@@ -47,15 +53,16 @@ export default class Login extends Vue implements IVueRouter {
     password: '',
     remember: false,
   };
+  wrongLoginOrPassword = false;
 
   onSubmit(event: Event) {
     event.preventDefault();
     login(this.form).then(response => {
       if (response.ok) {
         this.$emit('update');
-        this.$router.push('/');
+        this.$router.push('/profile');
       } else {
-        //  TODO: login error
+        this.wrongLoginOrPassword = true;
       }
     });
   }
