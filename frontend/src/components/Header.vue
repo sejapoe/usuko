@@ -30,7 +30,7 @@ import { logout } from '../services/utils';
 
 @Component
 export default class Header extends Vue {
-  @Prop(Object) user: IUser;
+  @Prop(Object) user!: IUser;
 
   logout() {
     logout().then(response => {
