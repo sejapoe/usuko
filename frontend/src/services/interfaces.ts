@@ -15,3 +15,9 @@ export interface IVueRouter {
   $router: VueRouter;
   $route: Route;
 }
+
+import { BvModal } from 'bootstrap-vue';
+
+export interface IBVModal {
+  $bvModal: BvModal;
+}
