@@ -8,7 +8,7 @@
       <b-modal
         id="modal-create"
         ref="modal-create"
-        title="Test"
+        title="Создание аккаунта"
         header-bg-variant="dark"
         body-bg-variant="dark"
         footer-bg-variant="dark"
