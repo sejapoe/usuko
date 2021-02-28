@@ -68,7 +68,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createAccount, rusToLatin } from '../services/utils';
+import { createAccount, transliterate } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
@@ -121,7 +121,7 @@ export default class AccountManagement extends Vue implements IBVModal {
 
   updateLogin() {
     if (this.createForm.generateLogin) {
-      this.createForm.login = rusToLatin(this.createForm.lastname.toLowerCase());
+      this.createForm.login = transliterate(this.createForm.lastname.toLowerCase());
     }
   }
 }

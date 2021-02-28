@@ -26,7 +26,7 @@ export async function createAccount(createForm: object): Promise<Response> {
   });
 }
 
-export function rusToLatin(str: string): string {
+export function transliterate(str: string): string {
   return str
     .replace(/\u0401/g, 'YO')
     .replace(/\u0419/g, 'I')
