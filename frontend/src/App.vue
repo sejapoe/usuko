@@ -20,7 +20,6 @@ export default class App extends Vue {
 
   async init() {
     this.user = await getCurrentUser();
-    console.log(this.user);
   }
 
   mounted() {
