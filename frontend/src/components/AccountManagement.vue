@@ -108,9 +108,26 @@
     <div v-if="accounts">
       <span>Результаты поиска:</span>
       <ul>
-        <li v-for="item in accounts" :key="item.login">{{ item.name }} {{ item.lastname }} ({{ item.username }})</li>
+        <li v-for="item in accounts" :key="item.login">
+          <a @click="showInfoModal(item)" href="#">{{ item.name }} {{ item.lastname }} ({{ item.username }})</a>
+        </li>
       </ul>
     </div>
+
+    <b-modal
+      id="modal-info"
+      ref="modal-info"
+      :title="`Просмотр аккаунта ${showAccount.username}`"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      @hidden="showAccount = {}"
+      ok-only
+    >
+      {{ showAccount.accountType ? types[showAccount.accountType].text : '' }}<br />Имя: {{ showAccount.name
+      }}<br />Фамилия:
+      {{ showAccount.lastname }}
+    </b-modal>
   </div>
 </template>
 
@@ -138,14 +155,16 @@ export default class AccountManagement extends Vue implements IBVModal {
     class: null,
     subject: '',
   };
-  types = [
+  readonly types = [
     { text: 'Ученик', value: 0 },
     { text: 'Учитель', value: 1 },
     { text: 'Директор', value: 2 },
+    { text: 'Администратор', value: 3 },
   ];
   classes = [];
   password = '';
   accounts = [];
+  showAccount = {};
 
   resetCreateModal() {
     this.createForm.type = 0;
@@ -200,6 +219,12 @@ export default class AccountManagement extends Vue implements IBVModal {
 
       this.$root.$emit('bv::hide::modal', 'modal-find');
     });
+  }
+
+  showInfoModal(item: object) {
+    this.showAccount = item;
+
+    this.$root.$emit('bv::show::modal', 'modal-info');
   }
 }
 </script>
