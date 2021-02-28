@@ -6,6 +6,9 @@ export enum EAccountType {
 }
 export interface IUser {
   username: string;
+  name: string;
+  lastname: string;
+  subject: string;
   type: EAccountType;
 }
 

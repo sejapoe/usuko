@@ -12,6 +12,9 @@ export enum EAccountType {
 
 export interface IUser extends Document {
   username: string;
+  name: string;
+  lastname: string;
+  subject: string;
   password: string;
   accountType: EAccountType;
   comparePasswords(candidatePassword: string): boolean;
@@ -20,6 +23,9 @@ export interface IUser extends Document {
 export const UserSchema = new Schema<IUser>(
   {
     username: { type: String, required: true },
+    name: String,
+    lastname: String,
+    subject: String,
     password: { type: String, required: true },
     accountType: {
       type: String,

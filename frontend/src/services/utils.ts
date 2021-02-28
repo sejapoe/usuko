@@ -26,6 +26,16 @@ export async function createAccount(createForm: object): Promise<Response> {
   });
 }
 
+export async function findAccounts(findForm: object): Promise<Response> {
+  return await fetch('/api/accounts/find', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(findForm),
+  });
+}
+
 export function transliterate(str: string): string {
   return str
     .replace(/\u0401/g, 'YO')

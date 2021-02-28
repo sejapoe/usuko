@@ -7,3 +7,15 @@ export function generatePassword(): string {
   }
   return retVal;
 }
+
+export class ScreenedRegExp extends RegExp {
+  constructor(pattern: string, flags?: string | undefined) {
+    // pattern = pattern.replace(/[\.\(\)\[\]\|\{\}\*\+\?\^\$\/\-\\]/g, '\\$');
+
+    if (flags) {
+      super(pattern, flags);
+    } else {
+      super(pattern);
+    }
+  }
+}

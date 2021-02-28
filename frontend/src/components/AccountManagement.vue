@@ -59,16 +59,65 @@
       </b-modal>
 
       <b-col md="6">
-        <b-button block>Найти аккаунт</b-button>
+        <b-button v-b-modal.modal-find block>Найти аккаунт</b-button>
       </b-col>
+
+      <b-modal
+        id="modal-find"
+        ref="modal-find"
+        title="Поиск аккаунта"
+        header-bg-variant="dark"
+        body-bg-variant="dark"
+        footer-bg-variant="dark"
+        @show="resetFindModal"
+        @hidden="resetFindModal"
+        @ok="handleFindModalOk"
+      >
+        <form ref="findForm">
+          <b-form-group label="Выберите тип аккаунта">
+            <b-form-radio-group v-model="findForm.type" :options="[{ value: -1, text: 'Любой' }, ...types]" />
+          </b-form-group>
+
+          <b-form-group label="Имя">
+            <b-form-input v-model="findForm.name" placeholder="Введите имя" />
+          </b-form-group>
+
+          <b-form-group label="Фамилия">
+            <b-form-input v-model="findForm.lastname" placeholder="Введите фамилию" />
+          </b-form-group>
+
+          <b-form-group label="Логин">
+            <b-form-input v-model="findForm.login" placeholder="Придумайте логин" />
+          </b-form-group>
+
+          <b-form-group label="Класс" v-if="findForm.type === 0">
+            <b-form-select v-model="findForm.class" :options="classes">
+              <template #first>
+                <b-form-select-option :value="null" disabled>Выберите класс</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+
+          <b-form-group label="Предмет" v-if="findForm.type === 1">
+            <b-form-input v-model="findForm.subject" placeholder="Введите предмет" />
+          </b-form-group>
+        </form>
+      </b-modal>
     </b-row>
+
+    <div v-if="accounts">
+      <span>Результаты поиска:</span>
+      <ul>
+        <li v-for="item in accounts" :key="item.login">{{ item.name }} {{ item.lastname }} ({{ item.username }})</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createAccount, transliterate } from '../services/utils';
+import { createAccount, transliterate, findAccounts } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
@@ -81,6 +130,14 @@ export default class AccountManagement extends Vue implements IBVModal {
     class: null,
     subject: '',
   };
+  findForm = {
+    type: -1,
+    name: '',
+    lastname: '',
+    login: '',
+    class: null,
+    subject: '',
+  };
   types = [
     { text: 'Ученик', value: 0 },
     { text: 'Учитель', value: 1 },
@@ -88,6 +145,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   ];
   classes = [];
   password = '';
+  accounts = [];
 
   resetCreateModal() {
     this.createForm.type = 0;
@@ -123,6 +181,25 @@ export default class AccountManagement extends Vue implements IBVModal {
     if (this.createForm.generateLogin) {
       this.createForm.login = transliterate(this.createForm.lastname.toLowerCase());
     }
+  }
+
+  resetFindModal() {
+    this.findForm.type = -1;
+    this.findForm.name = '';
+    this.findForm.lastname = '';
+    this.findForm.login = '';
+    this.findForm.class = null;
+    this.findForm.subject = '';
+  }
+
+  handleFindModalOk(bvModalEvt: Event) {
+    bvModalEvt.preventDefault();
+
+    findAccounts(this.findForm).then(async response => {
+      this.accounts = await response.json();
+
+      this.$root.$emit('bv::hide::modal', 'modal-find');
+    });
   }
 }
 </script>
