@@ -53,9 +53,7 @@
           </b-form-group>
         </form>
 
-        <span v-else>
-          {{ password }}
-        </span>
+        <span v-else> Пароль от нового аккаунта: {{ password }} </span>
       </b-modal>
 
       <b-col md="6">
@@ -106,7 +104,8 @@
     </b-row>
 
     <div v-if="accounts">
-      <span>Результаты поиска:</span>
+      <span v-if="accounts.length > 0">Результаты поиска:</span>
+      <span v-else>По вашему запросу ничего не найдено</span>
       <ul>
         <li v-for="item in accounts" :key="item.login">
           <a @click="showInfoModal(item)" href="#">{{ item.name }} {{ item.lastname }} ({{ item.username }})</a>
@@ -163,7 +162,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   ];
   classes = [];
   password = '';
-  accounts = [];
+  accounts = null;
   showAccount = {};
 
   resetCreateModal() {
