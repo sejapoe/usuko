@@ -6,7 +6,8 @@
     "frontend": "cd frontend && npm run serve",
     "backend": "cd backend && npm run start:dev",
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run --silent start:dev",
-    "start:dev": "concurrently --kill-others -n 'frontend,backend' -c 'blue,red' \"npm run frontend\" \"npm run backend\""
+    "start:dev": "concurrently --kill-others -n 'frontend,backend,mongo' -c 'blue,red,green' \"npm run frontend\" \"npm run backend\" \"npm run mongo\"",
+    "mongo": "mongod --dbpath mongodb_tmp --logappend --logpath /dev/null"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

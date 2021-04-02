@@ -68,3 +68,6 @@ todo.txt
 
 # local settings
 settings.json
+
+# database files
+mongodb_tmp/
