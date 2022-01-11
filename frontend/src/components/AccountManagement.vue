@@ -220,7 +220,7 @@ export default class AccountManagement extends Vue implements IBVModal {
     });
   }
 
-  showInfoModal(item) {
+  showInfoModal(item: Record<string, unknown>) {
     this.showAccount = item;
 
     this.$root.$emit('bv::show::modal', 'modal-info');
