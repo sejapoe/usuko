@@ -10,5 +10,4 @@
 Разрабатывается специально для [МБОУ СОШ №28](https://sch28-5gor.edusite.ru/)
 
 ## Авторы
-* [Евгений Бекалдиев](https://vk.com/p0__0q)
-* [Максим Гусев](https://vk.com/clownkekw)
+* [Евгений Бекалдиев](https://github.com/sejapoe)
