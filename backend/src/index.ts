@@ -42,11 +42,11 @@ app.use('/api/auth', AuthRouter);
 app.use('/api/accounts', AccountsRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server isn't running at ::${PORT}`);
+  console.log(`Server is running at ::${PORT}`);
 });
 
 mongoose.connect(
-  'mongodb://localhost:27017/usuko',
+  'mongodb://127.0.0.1:27017/usuko',
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,

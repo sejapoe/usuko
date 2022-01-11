@@ -18,7 +18,8 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "concurrently": "^7.0.0",
