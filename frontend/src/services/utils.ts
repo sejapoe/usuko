@@ -36,6 +36,25 @@ export async function findAccounts(findForm: Record<string, unknown>): Promise<R
   });
 }
 
+export async function editAccount(_id: string, editForm: Record<string, unknown>) {
+  editForm._id = _id;
+  await fetch('/api/accounts/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(editForm),
+  });
+  return {
+    _id,
+    accountType: editForm.type,
+    name: editForm.name,
+    lastname: editForm.lastname,
+    subject: editForm.subject,
+    class: editForm.class,
+  };
+}
+
 export function transliterate(str: string): string {
   return str
     .replace(/\u0401/g, 'YO')

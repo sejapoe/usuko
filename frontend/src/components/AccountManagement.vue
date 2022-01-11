@@ -116,16 +116,65 @@
     <b-modal
       id="modal-info"
       ref="modal-info"
-      :title="`Просмотр аккаунта ${showAccount.username}`"
+      :title="`${isEditingShowAccount ? 'Редактирование' : 'Просмотр'} аккаунта ${showAccount.username}`"
       header-bg-variant="dark"
       body-bg-variant="dark"
       footer-bg-variant="dark"
-      @hidden="showAccount = {}"
+      @hidden="
+        showAccount = {};
+        isEditingShowAccount = false;
+      "
       ok-only
     >
-      {{ showAccount.accountType ? types[showAccount.accountType].text : '' }}<br />Имя: {{ showAccount.name
-      }}<br />Фамилия:
-      {{ showAccount.lastname }}
+      <template v-if="!isEditingShowAccount">
+        {{ showAccount.accountType ? types[showAccount.accountType].text : '' }}<br />Имя: {{ showAccount.name
+        }}<br />Фамилия:
+        {{ showAccount.lastname }}
+      </template>
+      <template v-else>
+        <form ref="editForm" @submit.stop.prevent="handleSubmitOk">
+          <b-form-group label="Выберите тип аккаунта">
+            <b-form-radio-group v-model="editForm.type" :options="types" />
+          </b-form-group>
+
+          <b-form-group label="Имя">
+            <b-form-input v-model="editForm.name" placeholder="Введите имя" required />
+          </b-form-group>
+
+          <b-form-group label="Фамилия">
+            <b-form-input v-model="editForm.lastname" placeholder="Введите фамилию" required />
+          </b-form-group>
+
+          <b-form-group label="Класс" v-if="editForm.type === 0">
+            <b-form-select v-model="editForm.class" :options="classes">
+              <template #first>
+                <b-form-select-option :value="null" disabled>Выберите класс</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+
+          <b-form-group label="Предмет" v-if="editForm.type === 1">
+            <b-form-input v-model="editForm.subject" placeholder="Введите предмет" />
+          </b-form-group>
+        </form>
+      </template>
+
+      <template v-if="!isEditingShowAccount" #modal-footer="{ ok }">
+        <b-button size="sm" variant="info" @click="edit()">
+          Редактировать
+        </b-button>
+        <b-button size="sm" variant="success" @click="ok()">
+          OK
+        </b-button>
+      </template>
+      <template v-else #modal-footer>
+        <b-button size="sm" variant="danger" @click="isEditingShowAccount = false">
+          Отменить
+        </b-button>
+        <b-button size="sm" variant="success" @click="saveEditions()">
+          Сохранить
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -133,7 +182,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createAccount, transliterate, findAccounts } from '../services/utils';
+import { createAccount, transliterate, findAccounts, editAccount } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
@@ -154,6 +203,13 @@ export default class AccountManagement extends Vue implements IBVModal {
     class: null,
     subject: '',
   };
+  editForm = {
+    type: 0,
+    name: '',
+    lastname: '',
+    class: null,
+    subject: '',
+  };
   readonly types = [
     { text: 'Ученик', value: 0 },
     { text: 'Учитель', value: 1 },
@@ -164,6 +220,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   password = '';
   accounts = null;
   showAccount = {};
+  isEditingShowAccount = false;
 
   resetCreateModal() {
     this.createForm.type = 0;
@@ -213,9 +270,13 @@ export default class AccountManagement extends Vue implements IBVModal {
   handleFindModalOk(bvModalEvt: Event) {
     bvModalEvt.preventDefault();
 
+    this.findAccounts();
+  }
+
+  findAccounts() {
     findAccounts(this.findForm).then(async response => {
       this.accounts = await response.json();
-
+      this.isEditingShowAccount = false;
       this.$root.$emit('bv::hide::modal', 'modal-find');
     });
   }
@@ -224,6 +285,34 @@ export default class AccountManagement extends Vue implements IBVModal {
     this.showAccount = item;
 
     this.$root.$emit('bv::show::modal', 'modal-info');
+  }
+
+  edit() {
+    this.editForm.type = +this.showAccount.accountType;
+    this.editForm.name = this.showAccount.name;
+    this.editForm.lastname = this.showAccount.lastname;
+    this.editForm.class = this.showAccount.class;
+    this.editForm.subject = this.showAccount.subject;
+
+    this.isEditingShowAccount = true;
+    this.$root.$emit('bv::show::modal', 'modal-info');
+  }
+
+  saveEditions() {
+    editAccount(this.showAccount._id, this.editForm).then(() => {
+      this.makeSavedToast(this.showAccount.username);
+      this.findAccounts();
+      this.$root.$emit('bv::hide::modal', 'modal-info');
+    });
+  }
+
+  makeSavedToast(login: string) {
+    this.$bvToast.toast(`Изменения об аккаунте ${login} успешно сохранены`, {
+      title: `Изменения сохранены`,
+      autoHideDelay: 3000,
+      variant: "warning",
+      toaster: "b-toaster-bottom-right",
+    })
   }
 }
 </script>

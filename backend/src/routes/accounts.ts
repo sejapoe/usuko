@@ -19,6 +19,21 @@ AccountsRouter.post('/create', function (req, res) {
   });
 });
 
+AccountsRouter.post('/edit', function (req, res) {
+  User.findByIdAndUpdate(req.body._id, {
+    name: req.body.name,
+    lastname: req.body.lastname,
+    subject: req.body.subject,
+    accountType: req.body.type,
+  })
+    .then(user => {
+      res.send(user);
+    })
+    .catch(() => {
+      res.sendStatus(404);
+    });
+});
+
 AccountsRouter.post('/find', function (req, res) {
   let filterArr = {};
   if (req.body.type !== -1) {
