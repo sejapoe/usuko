@@ -3,7 +3,7 @@ export async function getCurrentUser() {
   return await response.json();
 }
 
-export async function login(form: object): Promise<Response> {
+export async function login(form: Record<string, unknown>): Promise<Response> {
   return await fetch('/api/auth/login', {
     method: 'POST',
     headers: {
@@ -16,7 +16,7 @@ export async function logout(): Promise<Response> {
   return await fetch('/api/auth/logout');
 }
 
-export async function createAccount(createForm: object): Promise<Response> {
+export async function createAccount(createForm: Record<string, unknown>): Promise<Response> {
   return await fetch('/api/accounts/create', {
     method: 'POST',
     headers: {
@@ -26,7 +26,7 @@ export async function createAccount(createForm: object): Promise<Response> {
   });
 }
 
-export async function findAccounts(findForm: object): Promise<Response> {
+export async function findAccounts(findForm: Record<string, unknown>): Promise<Response> {
   return await fetch('/api/accounts/find', {
     method: 'POST',
     headers: {
