@@ -160,20 +160,12 @@
       </template>
 
       <template v-if="!isEditingShowAccount" #modal-footer="{ ok }">
-        <b-button size="sm" variant="info" @click="edit()">
-          Редактировать
-        </b-button>
-        <b-button size="sm" variant="success" @click="ok()">
-          OK
-        </b-button>
+        <b-button size="sm" variant="info" @click="edit()"> Редактировать </b-button>
+        <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
       </template>
       <template v-else #modal-footer>
-        <b-button size="sm" variant="danger" @click="isEditingShowAccount = false">
-          Отменить
-        </b-button>
-        <b-button size="sm" variant="success" @click="saveEditions()">
-          Сохранить
-        </b-button>
+        <b-button size="sm" variant="danger" @click="isEditingShowAccount = false"> Отменить </b-button>
+        <b-button size="sm" variant="success" @click="saveEditions()"> Сохранить </b-button>
       </template>
     </b-modal>
   </div>
@@ -219,7 +211,15 @@ export default class AccountManagement extends Vue implements IBVModal {
   classes = [];
   password = '';
   accounts = null;
-  showAccount = {};
+  showAccount = {
+    _id: '',
+    accountType: 0,
+    name: '',
+    lastname: '',
+    username: '',
+    class: null,
+    subject: '',
+  };
   isEditingShowAccount = false;
 
   resetCreateModal() {
@@ -310,9 +310,9 @@ export default class AccountManagement extends Vue implements IBVModal {
     this.$bvToast.toast(`Изменения об аккаунте ${login} успешно сохранены`, {
       title: `Изменения сохранены`,
       autoHideDelay: 3000,
-      variant: "warning",
-      toaster: "b-toaster-bottom-right",
-    })
+      variant: 'warning',
+      toaster: 'b-toaster-bottom-right',
+    });
   }
 }
 </script>
