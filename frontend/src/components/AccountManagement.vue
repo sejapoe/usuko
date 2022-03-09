@@ -160,6 +160,7 @@
       </template>
 
       <template v-if="!isEditingShowAccount" #modal-footer="{ ok }">
+        <b-button size="sm" variant="danger" @click="resetPassword()"> Сбросить пароль </b-button>
         <b-button size="sm" variant="info" @click="edit()"> Редактировать </b-button>
         <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
       </template>
@@ -168,13 +169,25 @@
         <b-button size="sm" variant="success" @click="saveEditions()"> Сохранить </b-button>
       </template>
     </b-modal>
+
+    <b-modal
+      id="modal-pass"
+      ref="modal-pass"
+      title="Изменённый пароль"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      ok-only
+    >
+      <span>Новый пароль: {{ password }}</span>
+    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createAccount, transliterate, findAccounts, editAccount } from '../services/utils';
+import { createAccount, transliterate, findAccounts, editAccount, resetPassword } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
@@ -296,6 +309,15 @@ export default class AccountManagement extends Vue implements IBVModal {
 
     this.isEditingShowAccount = true;
     this.$root.$emit('bv::show::modal', 'modal-info');
+  }
+
+  resetPassword() {
+    resetPassword(this.showAccount._id).then(password => {
+      this.password = password.toString();
+      this.$root.$emit('bv::show::modal', 'modal-pass');
+    });
+
+    this.$root.$emit('bv::hide::modal', 'modal-info');
   }
 
   saveEditions() {

@@ -1,6 +1,9 @@
 import express from 'express';
 import User from '../models/User';
 import { generatePassword, ScreenedRegExp } from '../utils';
+import bcrypt from 'bcrypt';
+
+const SALT_WORK_FACTOR = 10;
 
 const AccountsRouter = express.Router();
 
@@ -58,6 +61,20 @@ AccountsRouter.post('/find', function (req, res) {
 
   User.find(filterArr).then(users => {
     res.send(users);
+  });
+});
+
+AccountsRouter.post('/resetPassword', function (req, res) {
+  const newPassword = generatePassword();
+  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+  const hashPassword = bcrypt.hashSync(newPassword, salt);
+  User.updateOne(
+    { _id: req.body._id },
+    {
+      password: hashPassword,
+    },
+  ).then(() => {
+    res.send(newPassword);
   });
 });
 

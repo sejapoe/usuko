@@ -55,6 +55,17 @@ export async function editAccount(_id: string, editForm: Record<string, unknown>
   };
 }
 
+export async function resetPassword(_id: string) {
+  const res = await fetch('/api/accounts/resetPassword', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ _id }),
+  });
+  return await res.text();
+}
+
 export function transliterate(str: string): string {
   return str
     .replace(/\u0401/g, 'YO')
