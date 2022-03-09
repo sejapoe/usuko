@@ -1,5 +1,5 @@
 import express from 'express';
-import User from '../models/User';
+import User, { UserSchema } from '../models/User';
 import { generatePassword, ScreenedRegExp } from '../utils';
 import bcrypt from 'bcrypt';
 
@@ -9,16 +9,22 @@ const AccountsRouter = express.Router();
 
 AccountsRouter.post('/create', function (req, res) {
   const password = generatePassword();
-  const user = new User({
-    username: req.body.login,
-    name: req.body.name,
-    lastname: req.body.lastname,
-    subject: req.body.subject,
-    password,
-    accountType: req.body.type,
-  });
-  user.save().then(() => {
-    res.send(password);
+  User.find({ username: req.body.login }).then(u => {
+    if (u && u.length != 0) {
+      res.send('EAR');
+    } else {
+      const user = new User({
+        username: req.body.login,
+        name: req.body.name,
+        lastname: req.body.lastname,
+        subject: req.body.subject,
+        password,
+        accountType: req.body.type,
+      });
+      user.save().then(() => {
+        res.send(password);
+      });
+    }
   });
 });
 

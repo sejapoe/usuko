@@ -16,7 +16,8 @@
         @hidden="resetCreateModal"
         @ok="handleCreateModalOk"
       >
-        <form v-if="!password" ref="createForm" @submit.stop.prevent="handleSubmitOk">
+        <span v-if="alreadyRegistered"> Аккаунт с таким именем пользователя уже существует </span>
+        <form v-else-if="!password" ref="createForm" @submit.stop.prevent="handleSubmitOk">
           <b-form-group label="Выберите тип аккаунта">
             <b-form-radio-group v-model="createForm.type" :options="types" />
           </b-form-group>
@@ -177,6 +178,7 @@
       header-bg-variant="dark"
       body-bg-variant="dark"
       footer-bg-variant="dark"
+      @hidden="password = ''"
       ok-only
     >
       <span>Новый пароль: {{ password }}</span>
@@ -223,6 +225,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   ];
   classes = [];
   password = '';
+  alreadyRegistered = false;
   accounts = null;
   showAccount = {
     _id: '',
@@ -243,15 +246,17 @@ export default class AccountManagement extends Vue implements IBVModal {
     this.createForm.generateLogin = false;
     this.createForm.class = null;
     this.createForm.subject = '';
+    this.alreadyRegistered = false;
   }
 
   handleCreateModalOk(bvModalEvt: Event) {
-    if (!this.password) {
+    if (!this.password && !this.alreadyRegistered) {
       bvModalEvt.preventDefault();
 
       this.handleSubmitCreateForm();
     } else {
       this.password = '';
+      this.alreadyRegistered = false;
     }
   }
 
@@ -261,7 +266,12 @@ export default class AccountManagement extends Vue implements IBVModal {
     }
 
     createAccount(this.createForm).then(async response => {
-      this.password = await response.text();
+      const temp = await response.text();
+      if (temp == 'EAR') {
+        this.alreadyRegistered = true;
+      } else {
+        this.password = temp;
+      }
     });
   }
 
