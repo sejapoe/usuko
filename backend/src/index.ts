@@ -11,6 +11,7 @@ import './passport';
 import UserRouter from './routes/user';
 import AuthRouter from './routes/auth';
 import AccountsRouter from './routes/accounts';
+import ClassesRouter from './routes/classes';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use('/api/user', UserRouter);
 app.use('/api/auth', AuthRouter);
 app.use('/api/accounts', AccountsRouter);
+app.use('/api/classes', ClassesRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at ::${PORT}`);

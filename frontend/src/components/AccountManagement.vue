@@ -189,7 +189,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createAccount, transliterate, findAccounts, editAccount, resetPassword } from '../services/utils';
+import { createAccount, transliterate, findAccounts, editAccount, resetPassword, getClasses } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
@@ -237,6 +237,21 @@ export default class AccountManagement extends Vue implements IBVModal {
     subject: '',
   };
   isEditingShowAccount = false;
+
+  constructor() {
+    super();
+    this.getClasses();
+  }
+
+  getClasses() {
+    getClasses().then(async response => {
+      this.classes = await response.json();
+      this.classes.forEach(el => {
+        el.text = `${el.num} ${el.liter}`;
+        el.value = el._id;
+      });
+    });
+  }
 
   resetCreateModal() {
     this.createForm.type = 0;

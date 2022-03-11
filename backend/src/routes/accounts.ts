@@ -20,6 +20,7 @@ AccountsRouter.post('/create', function (req, res) {
         subject: req.body.subject,
         password,
         accountType: req.body.type,
+        class: req.body.class,
       });
       user.save().then(() => {
         res.send(password);
@@ -29,18 +30,19 @@ AccountsRouter.post('/create', function (req, res) {
 });
 
 AccountsRouter.post('/edit', function (req, res) {
-  User.findByIdAndUpdate(req.body._id, {
-    name: req.body.name,
-    lastname: req.body.lastname,
-    subject: req.body.subject,
-    accountType: req.body.type,
-  })
-    .then(user => {
-      res.send(user);
-    })
-    .catch(() => {
-      res.sendStatus(404);
-    });
+  User.updateOne(
+    { _id: req.body._id },
+    {
+      name: req.body.name,
+      lastname: req.body.lastname,
+      subject: req.body.subject,
+      accountType: req.body.type,
+      class: req.body.class,
+    },
+  ).then(user => {
+    if (!user) return res.sendStatus(404);
+    res.send(user);
+  });
 });
 
 AccountsRouter.post('/find', function (req, res) {

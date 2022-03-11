@@ -135,3 +135,17 @@ export function transliterate(str: string): string {
     .replace(/\u0431/g, 'b')
     .replace(/\u044E/g, 'yu');
 }
+
+export function createClass(createForm: Record<string, unknown>): Promise<Response> {
+  return fetch('/api/classes/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(createForm),
+  });
+}
+
+export function getClasses(): Promise<Response> {
+  return fetch('/api/classes/get');
+}

@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
+import Class from './Class';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -17,6 +18,7 @@ export interface IUser extends Document {
   subject: string;
   password: string;
   accountType: EAccountType;
+  class: string;
   comparePasswords(candidatePassword: string): boolean;
 }
 
@@ -32,6 +34,7 @@ export const UserSchema = new Schema<IUser>(
       default: EAccountType.Student,
       enum: Object.values(EAccountType),
     },
+    class: String,
   },
   {
     versionKey: false,
@@ -39,16 +42,37 @@ export const UserSchema = new Schema<IUser>(
 );
 
 UserSchema.pre('save', function (next) {
-  if (!this.isModified('password')) return next();
-
-  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-
-  this.password = bcrypt.hashSync(this.password, salt);
+  if (this.isModified('password')) {
+    const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+    this.password = bcrypt.hashSync(this.password, salt);
+  }
+  if (this.isModified('class')) {
+    updatePupilsInClasses();
+  }
   next();
+});
+
+UserSchema.post('updateOne', function () {
+  updatePupilsInClasses();
 });
 
 UserSchema.methods.comparePasswords = function (candidatePassword: string): boolean {
   return bcrypt.compareSync(candidatePassword, this.password);
 };
 
-export default model<IUser>('user', UserSchema);
+const m = model<IUser>('user', UserSchema);
+export default m;
+
+function updatePupilsInClasses() {
+  Class.find().then(classes => {
+    classes.forEach(cl => (cl.pupils = []));
+    m.find().then(users => {
+      users.forEach(u => {
+        if (u && u.class && u.class !== '') {
+          classes.find(cl => cl._id == u.class)?.pupils.push(u._id);
+        }
+      });
+      classes.forEach(cl => cl.save());
+    });
+  });
+}
