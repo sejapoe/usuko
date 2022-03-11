@@ -19,6 +19,7 @@ export interface IUser extends Document {
   password: string;
   accountType: EAccountType;
   class: string;
+  classes: string[];
   comparePasswords(candidatePassword: string): boolean;
 }
 
@@ -35,6 +36,7 @@ export const UserSchema = new Schema<IUser>(
       enum: Object.values(EAccountType),
     },
     class: String,
+    classes: [String],
   },
   {
     versionKey: false,

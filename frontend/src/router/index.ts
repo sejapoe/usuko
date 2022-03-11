@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 // import Home from '../views/Home.vue';
 import Login from '@/views/Login.vue';
 import Profile from '@/views/Profile.vue';
+import TeacherManagement from '@/components/TeacherManagement.vue';
 import AccountManagement from '@/components/AccountManagement.vue';
 import ClassManagement from '@/components/ClassManagement.vue';
 
@@ -24,7 +25,7 @@ const routes: Array<RouteConfig> = [
     name: 'Profile',
     component: Profile,
     children: [
-      { path: 'foo' },
+      { path: 'foo', component: TeacherManagement },
       { path: 'bar', component: AccountManagement },
       { path: 'baz', component: ClassManagement },
     ],

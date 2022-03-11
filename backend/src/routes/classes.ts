@@ -1,6 +1,6 @@
 import express from 'express';
 import Class from '../models/Class';
-import { IUser } from '../models/User';
+import User, { IUser } from '../models/User';
 
 const ClassesRouter = express.Router();
 
@@ -24,6 +24,16 @@ ClassesRouter.post('/delete', (req, res) => {
     _id: req.body._id,
   }).then(() => {
     res.sendStatus(200);
+  });
+});
+
+ClassesRouter.post('/addToTeacher', (req, res) => {
+  User.findOne({ _id: req.body._id }).then(user => {
+    if (!user) res.sendStatus(404);
+    user?.classes.push(req.body.classId);
+    user?.save().then(() => {
+      res.sendStatus(200);
+    });
   });
 });
 

@@ -161,3 +161,16 @@ export function deleteClass(id: string): Promise<Response> {
 export function getClasses(): Promise<Response> {
   return fetch('/api/classes/get');
 }
+
+export function addClass(id: string, classId: string): Promise<Response> {
+  return fetch('/api/classes/addToTeacher', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      _id: id,
+      classId,
+    }),
+  });
+}
