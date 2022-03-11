@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user.accountType == 3">
     <b-card bg-variant="dark" text-variant="white" no-body>
       <b-card-header header-tag="nav">
         <b-nav card-header tabs justified>

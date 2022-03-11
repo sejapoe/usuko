@@ -12,6 +12,7 @@ import UserRouter from './routes/user';
 import AuthRouter from './routes/auth';
 import AccountsRouter from './routes/accounts';
 import ClassesRouter from './routes/classes';
+import { IUser } from './models/User';
 
 const app = express();
 
@@ -37,6 +38,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use((req, res, next) => {
+  res.locals.user = req.user as IUser;
+  next();
+});
 
 app.use('/api/user', UserRouter);
 app.use('/api/auth', AuthRouter);

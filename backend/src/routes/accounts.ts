@@ -1,11 +1,16 @@
 import express from 'express';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 import { generatePassword, ScreenedRegExp } from '../utils';
 import bcrypt from 'bcrypt';
 
 const SALT_WORK_FACTOR = 10;
 
 const AccountsRouter = express.Router();
+
+AccountsRouter.all('', (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  if ((req.user as IUser).accountType != 3) return res.sendStatus(403);
+});
 
 AccountsRouter.post('/create', function (req, res) {
   const password = generatePassword();

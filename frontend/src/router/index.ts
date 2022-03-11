@@ -29,6 +29,10 @@ const routes: Array<RouteConfig> = [
       { path: 'baz', component: ClassManagement },
     ],
   },
+  {
+    path: '/error',
+    name: 'Error',
+  },
 ];
 
 const router = new VueRouter({

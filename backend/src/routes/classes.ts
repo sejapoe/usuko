@@ -1,7 +1,13 @@
 import express from 'express';
 import Class from '../models/Class';
+import { IUser } from '../models/User';
 
 const ClassesRouter = express.Router();
+
+ClassesRouter.all('', (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  if ((req.user as IUser).accountType != 3) return res.sendStatus(403);
+});
 
 ClassesRouter.post('/create', (req, res) => {
   const cl = new Class({
