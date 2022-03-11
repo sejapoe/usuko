@@ -70,9 +70,10 @@ function updatePupilsInClasses() {
     classes.forEach(cl => (cl.pupils = []));
     m.find().then(users => {
       users.forEach(u => {
-        if (u && u.class && u.class !== '') {
+        if (u.class && u.class !== '') {
           classes.find(cl => cl._id == u.class)?.pupils.push(u._id);
         }
+        u.classes.forEach(c => classes.find(cl => cl._id == c)?.teachers.push(u._id));
       });
       classes.forEach(cl => cl.save());
     });

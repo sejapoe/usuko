@@ -5,6 +5,7 @@ export interface IClass extends Document {
   liter: string;
   tasks: string[];
   pupils: string[];
+  teachers: string[];
 }
 
 export const ClassSchema = new Schema<IClass>(
@@ -13,6 +14,7 @@ export const ClassSchema = new Schema<IClass>(
     liter: String,
     tasks: [String],
     pupils: [String],
+    teachers: [String],
   },
   {
     versionKey: false,

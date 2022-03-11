@@ -17,7 +17,18 @@
       header-bg-variant="dark"
       body-bg-variant="dark"
       footer-bg-variant="dark"
-      @hidden="showAccount = {}"
+      @hidden="
+        showAccount = {
+          _id: '',
+          accountType: 0,
+          name: '',
+          lastname: '',
+          username: '',
+          subject: '',
+          classes: [],
+          availableClasses: [],
+        }
+      "
       ok-only
     >
       Учитель<br />Имя: {{ showAccount.name }}<br />Фамилия: {{ showAccount.lastname }}<br />Предмет:
@@ -37,7 +48,7 @@
       <span v-if="showAccount.classes.length == 0">Здесь пока ничего нет, но вы всегда можете это исправить.</span>
       <ul>
         <li v-for="item in showAccount.classes" :key="item">
-          <a href="#">{{ classes.find(a => a._id == item).text }}</a>
+          {{ classes.find(a => a._id == item).text }} <a @click="removeClassFromTeacher(item)" href="#">[delete]</a>
         </li>
       </ul>
 
@@ -74,7 +85,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { findAccounts, getClasses, addClass } from '../services/utils';
+import { findAccounts, getClasses, addClass, removeClassFromTeacher } from '../services/utils';
 
 @Component
 export default class TeacherManagement extends Vue implements IBVModal {
@@ -142,7 +153,17 @@ export default class TeacherManagement extends Vue implements IBVModal {
       await this.findAccounts();
       await this.getClasses();
       this.showAccount = this.accounts.find(a => a._id == this.showAccount._id);
+      this.showAccount.availableClasses = this.classes.filter(a => !this.showAccount.classes.includes(a._id));
       this.$root.$emit('bv::hide::modal', 'modal-add-class');
+    });
+  }
+
+  removeClassFromTeacher(id: string) {
+    removeClassFromTeacher(this.showAccount._id, id).then(async () => {
+      await this.findAccounts();
+      await this.getClasses();
+      this.showAccount = this.accounts.find(a => a._id == this.showAccount._id);
+      this.showAccount.availableClasses = this.classes.filter(a => !this.showAccount.classes.includes(a._id));
     });
   }
 }

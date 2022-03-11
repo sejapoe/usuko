@@ -37,6 +37,16 @@ ClassesRouter.post('/addToTeacher', (req, res) => {
   });
 });
 
+ClassesRouter.post('/removeFromTeacher', (req, res) => {
+  User.findOne({ _id: req.body._id }).then(user => {
+    if (!user) return res.sendStatus(404);
+    user.classes = user.classes.filter(a => a != req.body.classId);
+    user.save().then(() => {
+      res.sendStatus(200);
+    });
+  });
+});
+
 ClassesRouter.get('/get', (req, res) => {
   Class.find().then(classes => {
     classes.sort((a, b) => {
