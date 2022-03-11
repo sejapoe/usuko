@@ -58,13 +58,13 @@
       </b-modal>
 
       <b-col md="6">
-        <b-button v-b-modal.modal-find block>Найти аккаунт</b-button>
+        <b-button v-b-modal.modal-find block>Настроить фильтр</b-button>
       </b-col>
 
       <b-modal
         id="modal-find"
         ref="modal-find"
-        title="Поиск аккаунта"
+        title="Фильтр аккаунтов"
         header-bg-variant="dark"
         body-bg-variant="dark"
         footer-bg-variant="dark"
@@ -105,8 +105,8 @@
     </b-row>
 
     <div v-if="accounts">
-      <span v-if="accounts.length > 0">Результаты поиска:</span>
-      <span v-else>По вашему запросу ничего не найдено</span>
+      <span v-if="accounts.length > 0">Аккаунты:</span>
+      <span v-else>Нет подходящих аккаунтов</span>
       <ul>
         <li v-for="item in accounts" :key="item.login">
           <a @click="showInfoModal(item)" href="#">{{ item.name }} {{ item.lastname }} ({{ item.username }})</a>
@@ -241,6 +241,14 @@ export default class AccountManagement extends Vue implements IBVModal {
   constructor() {
     super();
     this.getClasses();
+    this.findAccounts({
+      type: -1,
+      name: '',
+      lastname: '',
+      login: '',
+      class: null,
+      subject: '',
+    });
   }
 
   getClasses() {
@@ -308,11 +316,11 @@ export default class AccountManagement extends Vue implements IBVModal {
   handleFindModalOk(bvModalEvt: Event) {
     bvModalEvt.preventDefault();
 
-    this.findAccounts();
+    this.findAccounts(this.findForm);
   }
 
-  findAccounts() {
-    findAccounts(this.findForm).then(async response => {
+  findAccounts(filter) {
+    findAccounts(filter).then(async response => {
       this.accounts = await response.json();
       this.isEditingShowAccount = false;
       this.$root.$emit('bv::hide::modal', 'modal-find');
