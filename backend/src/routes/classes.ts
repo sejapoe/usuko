@@ -13,6 +13,14 @@ ClassesRouter.post('/create', (req, res) => {
   });
 });
 
+ClassesRouter.post('/delete', (req, res) => {
+  Class.deleteOne({
+    _id: req.body._id,
+  }).then(() => {
+    res.sendStatus(200);
+  });
+});
+
 ClassesRouter.get('/get', (req, res) => {
   Class.find().then(classes => {
     classes.sort((a, b) => {

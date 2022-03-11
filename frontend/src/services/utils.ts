@@ -146,6 +146,18 @@ export function createClass(createForm: Record<string, unknown>): Promise<Respon
   });
 }
 
+export function deleteClass(id: string): Promise<Response> {
+  return fetch('/api/classes/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      _id: id,
+    }),
+  });
+}
+
 export function getClasses(): Promise<Response> {
   return fetch('/api/classes/get');
 }

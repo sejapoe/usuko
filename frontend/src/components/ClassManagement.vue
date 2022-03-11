@@ -30,16 +30,35 @@
 
     <ul>
       <li v-for="item in classes" :key="item._id">
-        <a href="#">{{ item.num }} {{ item.liter }} - ({{ item.pupils.length }} чел.)</a>
+        <a @click="showInfoModal(item)" href="#">{{ item.num }} {{ item.liter }} - ({{ item.pupils.length }} чел.)</a>
       </li>
     </ul>
+
+    <b-modal
+      id="modal-info"
+      ref="modal-info"
+      :title="`Класс ${showClass.num} ${showClass.liter}`"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      @hidden="showClass = {}"
+      ok-only
+    >
+      Количество учеников: {{ showClass.pupils.length }}
+
+      <template #modal-footer="{ ok }">
+        <b-button size="sm" variant="danger" @click="deleteClass()"> Удалить класс </b-button>
+        <b-button size="sm" variant="info" @click="transferClass()"> Перевести класс </b-button>
+        <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IBVModal } from '../services/interfaces';
-import { createClass, getClasses } from '../services/utils';
+import { createClass, getClasses, deleteClass } from '../services/utils';
 
 @Component
 export default class ClassManagement extends Vue implements IBVModal {
@@ -48,16 +67,12 @@ export default class ClassManagement extends Vue implements IBVModal {
     liter: '',
   };
   classes = [];
-  showAccount = {
+  showClass = {
     _id: '',
-    accountType: 0,
-    name: '',
-    lastname: '',
-    username: '',
-    class: null,
-    subject: '',
+    num: 0,
+    liter: '',
+    pupils: [],
   };
-  isEditingShowAccount = false;
 
   constructor() {
     super();
@@ -88,6 +103,19 @@ export default class ClassManagement extends Vue implements IBVModal {
   getClasses() {
     getClasses().then(async response => {
       this.classes = await response.json();
+    });
+  }
+
+  showInfoModal(item: Record<string, unknown>) {
+    this.showClass = item;
+
+    this.$root.$emit('bv::show::modal', 'modal-info');
+  }
+
+  deleteClass() {
+    deleteClass(this.showClass._id).then(() => {
+      this.getClasses();
+      this.$root.$emit('bv::hide::modal', 'modal-info');
     });
   }
 }
