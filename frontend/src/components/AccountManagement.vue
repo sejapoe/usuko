@@ -356,7 +356,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   saveEditions() {
     editAccount(this.showAccount._id, this.editForm).then(() => {
       this.makeSavedToast(this.showAccount.username);
-      this.findAccounts();
+      this.findAccounts(this.findForm);
       this.$root.$emit('bv::hide::modal', 'modal-info');
     });
   }
