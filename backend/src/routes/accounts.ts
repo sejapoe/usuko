@@ -1,5 +1,5 @@
 import express from 'express';
-import User, { UserSchema } from '../models/User';
+import User from '../models/User';
 import { generatePassword, ScreenedRegExp } from '../utils';
 import bcrypt from 'bcrypt';
 
