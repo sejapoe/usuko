@@ -243,11 +243,6 @@ export default class AccountManagement extends Vue implements IBVModal {
     this.getClasses();
     this.findAccounts({
       type: -1,
-      name: '',
-      lastname: '',
-      login: '',
-      class: null,
-      subject: '',
     });
   }
 
