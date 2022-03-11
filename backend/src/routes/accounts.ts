@@ -67,6 +67,10 @@ AccountsRouter.post('/find', function (req, res) {
     filterArr = { subject: new ScreenedRegExp(req.body.subject, 'i'), ...filterArr };
   }
 
+  if (req.body.class && req.body.type === 0) {
+    filterArr = { class: new ScreenedRegExp(req.body.class, 'i'), ...filterArr };
+  }
+
   User.find(filterArr).then(users => {
     res.send(users);
   });
