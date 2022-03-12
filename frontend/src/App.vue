@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ready">
     <Header :user="user" @update="init" />
     <router-view @update="init" :user="user" />
   </div>
@@ -17,13 +17,15 @@ import { getCurrentUser } from './services/utils';
 })
 export default class App extends Vue {
   user = {};
+  ready = false;
 
   async init() {
     this.user = await getCurrentUser();
   }
 
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
+    this.ready = true;
   }
 }
 </script>
