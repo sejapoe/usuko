@@ -187,3 +187,10 @@ export function removeClassFromTeacher(teacherId: string, classId: string): Prom
     }),
   });
 }
+
+export async function createTask(data: FormData): Promise<Response> {
+  return await fetch('/api/tasks/create', {
+    method: 'POST',
+    body: data,
+  });
+}

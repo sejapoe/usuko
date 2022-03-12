@@ -5,7 +5,6 @@ import passport from 'passport';
 import session from 'express-session';
 import mongoose from 'mongoose';
 import path from 'path';
-
 import './passport';
 
 import UserRouter from './routes/user';
@@ -13,6 +12,7 @@ import AuthRouter from './routes/auth';
 import AccountsRouter from './routes/accounts';
 import ClassesRouter from './routes/classes';
 import { IUser } from './models/User';
+import TaskRouter from './routes/tasks';
 
 const app = express();
 
@@ -47,6 +47,7 @@ app.use('/api/user', UserRouter);
 app.use('/api/auth', AuthRouter);
 app.use('/api/accounts', AccountsRouter);
 app.use('/api/classes', ClassesRouter);
+app.use('/api/tasks', TaskRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at ::${PORT}`);

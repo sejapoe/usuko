@@ -71,3 +71,6 @@ settings.json
 
 # database files
 mongodb_tmp/
+
+# stored files
+backend/data
