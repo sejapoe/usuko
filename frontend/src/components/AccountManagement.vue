@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user.accountType == 3">
     <b-row>
       <b-col md="6">
         <b-button v-b-modal.modal-create block>Создать аккаунт</b-button>

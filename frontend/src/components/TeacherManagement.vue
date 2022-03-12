@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user.accountType == 3">
     <div v-if="accounts">
       <span v-if="accounts.length > 0">Учителя:</span>
       <span v-else>На данный момент учителей нет. <a href="/profile/bar">Создать учителя.</a></span>
