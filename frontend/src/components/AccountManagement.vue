@@ -240,8 +240,7 @@ export default class AccountManagement extends Vue implements IBVModal {
   };
   isEditingShowAccount = false;
 
-  constructor() {
-    super();
+  mounted() {
     this.getClasses();
     this.findAccounts({
       type: -1,

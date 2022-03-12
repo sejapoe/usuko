@@ -105,8 +105,7 @@ export default class TeacherManagement extends Vue implements IBVModal {
   };
   addClassSelection = null;
 
-  constructor() {
-    super();
+  mounted() {
     this.getClasses();
     this.findAccounts();
   }

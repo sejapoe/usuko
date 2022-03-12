@@ -76,8 +76,7 @@ export default class ClassManagement extends Vue implements IBVModal {
     pupils: [],
   };
 
-  constructor() {
-    super();
+  mounted() {
     this.getClasses();
   }
 
