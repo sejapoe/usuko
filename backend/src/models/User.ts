@@ -48,13 +48,10 @@ UserSchema.pre('save', function (next) {
     const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
     this.password = bcrypt.hashSync(this.password, salt);
   }
-  if (this.isModified('class')) {
-    updatePupilsInClasses();
-  }
   next();
 });
 
-UserSchema.post('updateOne', function () {
+UserSchema.post(/(save|updateOne)/, function () {
   updatePupilsInClasses();
 });
 
@@ -68,6 +65,7 @@ export default m;
 function updatePupilsInClasses() {
   Class.find().then(classes => {
     classes.forEach(cl => (cl.pupils = []));
+    classes.forEach(cl => (cl.teachers = []));
     m.find().then(users => {
       users.forEach(u => {
         if (u.class && u.class !== '') {
