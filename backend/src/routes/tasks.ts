@@ -22,10 +22,10 @@ TaskRouter.post('/create', upload.array('file'), (req, res) => {
   delete req.body.time;
   const task = new Task(req.body);
   if (req.files && req.files instanceof Array) {
-    const dir = path.resolve(`../../data/tasks/${task._id}`);
+    const dir = path.resolve(`./data/tasks/${task._id}`);
     fs.mkdirSync(dir);
     for (const file of req.files) {
-      const filePath = path.join('../..', file.path);
+      const filePath = path.join(file.path);
       const newPath = path.join(dir, file.originalname);
       fs.renameSync(filePath, newPath);
       task.files.push(newPath);
