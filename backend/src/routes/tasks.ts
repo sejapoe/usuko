@@ -21,7 +21,7 @@ TaskRouter.post('/create', upload.array('file'), (req, res) => {
   delete req.body.date;
   delete req.body.time;
   const task = new Task(req.body);
-  if (req.files && req.files instanceof Array) {
+  if (req.files && req.files instanceof Array && req.files.length != 0) {
     const dir = path.resolve(`./data/tasks/${task._id}`);
     fs.mkdirSync(dir);
     for (const file of req.files) {
@@ -31,8 +31,18 @@ TaskRouter.post('/create', upload.array('file'), (req, res) => {
       task.files.push(newPath);
     }
   }
+  task.teacher = (req.user as IUser)._id;
   task.save().then(() => {
     res.sendStatus(200);
+  });
+});
+
+TaskRouter.get('/get', (req, res) => {
+  const user = req.user as IUser;
+  Task.find({
+    teacher: user._id,
+  }).then(tasks => {
+    res.send(tasks);
   });
 });
 

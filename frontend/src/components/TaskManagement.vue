@@ -31,7 +31,7 @@
             />
           </b-form-group>
 
-          <b-form-group label="Классы">
+          <b-form-group label="Классы" required>
             <b-form-select
               name="classes"
               v-model="createForm.classes"
@@ -71,6 +71,15 @@
       </b-modal>
     </b-row>
 
+    <ul>
+      <li v-for="item in tasks" :key="item._id">
+        <a @click="showInfoModal(item)" href="#"
+          >{{ item.title }}
+          {{ item.files.length == 0 ? '' : `(${item.files.length} файл${quantitySuffix(item.files.length)})` }}</a
+        >
+      </li>
+    </ul>
+
     <b-modal
       id="modal-info"
       ref="modal-info"
@@ -95,7 +104,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IBVModal, IUser } from '../services/interfaces';
-import { createTask, getClasses, deleteClass } from '../services/utils';
+import { createTask, getClasses, deleteClass, getTasks, quantitySuffix } from '../services/utils';
 
 @Component
 export default class TaskManagement extends Vue implements IBVModal {
@@ -111,16 +120,18 @@ export default class TaskManagement extends Vue implements IBVModal {
   };
   allClasses = [];
   classes = [];
+  tasks = [];
   showClass = {
     _id: '',
     num: 0,
     liter: '',
     pupils: [],
   };
+  quantitySuffix = quantitySuffix;
 
-  constructor() {
-    super();
+  mounted() {
     this.getAllClasses();
+    this.getTasks();
   }
 
   resetCreateModal() {
@@ -141,8 +152,9 @@ export default class TaskManagement extends Vue implements IBVModal {
     }
 
     createTask(new FormData(this.$refs.createForm as HTMLFormElement)).then(() => {
+      this.getTasks();
       this.$bvToast.toast(`Задание успешно создано`, {
-        title: `Класс создан`,
+        title: `Задание создано`,
         autoHideDelay: 3000,
         variant: 'success',
         toaster: 'b-toaster-bottom-right',
@@ -161,6 +173,13 @@ export default class TaskManagement extends Vue implements IBVModal {
         };
         this.classes.push(x);
       }
+    });
+  }
+
+  getTasks() {
+    getTasks().then(async response => {
+      this.tasks = await response.json();
+      console.log(this.tasks);
     });
   }
 

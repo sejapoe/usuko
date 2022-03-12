@@ -1,3 +1,9 @@
+export function quantitySuffix(count: number): string {
+  if ([11, 12, 13, 14].includes(count) || count % 10 == 0 || count % 10 >= 5) return 'ов';
+  if (count % 10 == 1) return '';
+  return 'а';
+}
+
 export async function getCurrentUser() {
   const response = await fetch('/api/user');
   return await response.json();
@@ -193,4 +199,8 @@ export async function createTask(data: FormData): Promise<Response> {
     method: 'POST',
     body: data,
   });
+}
+
+export async function getTasks() {
+  return await fetch('/api/tasks/get');
 }
