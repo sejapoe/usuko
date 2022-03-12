@@ -25,9 +25,9 @@ const routes: Array<RouteConfig> = [
     name: 'Profile',
     component: Profile,
     children: [
-      { path: 'foo', component: TeacherManagement },
-      { path: 'bar', component: AccountManagement },
-      { path: 'baz', component: ClassManagement },
+      { path: 'admin/teachers', component: TeacherManagement },
+      { path: 'admin/accounts', component: AccountManagement },
+      { path: 'admin/classes', component: ClassManagement },
     ],
   },
   {

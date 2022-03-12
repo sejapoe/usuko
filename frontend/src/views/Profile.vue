@@ -1,11 +1,13 @@
 <template>
-  <div v-if="user.accountType == 3">
+  <div>
     <b-card bg-variant="dark" text-variant="white" no-body>
       <b-card-header header-tag="nav">
-        <b-nav card-header tabs justified>
-          <b-nav-item to="/profile/foo" exact exact-active-class="active"> Управление учителями </b-nav-item>
-          <b-nav-item to="/profile/bar" exact exact-active-class="active"> Управление аккаунтами </b-nav-item>
-          <b-nav-item to="/profile/baz" exact exact-active-class="active"> Управление классами </b-nav-item>
+        <b-nav v-if="user.accountType == 3" card-header tabs justified>
+          <b-nav-item to="/profile/admin/teachers" exact exact-active-class="active"> Управление учителями </b-nav-item>
+          <b-nav-item to="/profile/admin/accounts" exact exact-active-class="active">
+            Управление аккаунтами
+          </b-nav-item>
+          <b-nav-item to="/profile/admin/classes" exact exact-active-class="active"> Управление классами </b-nav-item>
         </b-nav>
       </b-card-header>
       <b-card-body>
