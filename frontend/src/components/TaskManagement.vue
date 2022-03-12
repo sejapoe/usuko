@@ -154,7 +154,6 @@ export default class TaskManagement extends Vue implements IBVModal {
     this.classes = [];
     this.user.classes.forEach(el => {
       const cl = this.allClasses.find(a => a._id == el);
-      console.log(cl);
       if (cl) {
         const x = {
           text: `${cl.num} ${cl.liter}`,
