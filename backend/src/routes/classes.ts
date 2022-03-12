@@ -4,9 +4,10 @@ import User, { IUser } from '../models/User';
 
 const ClassesRouter = express.Router();
 
-ClassesRouter.all('', (req, res) => {
+ClassesRouter.all('/*', (req, res, next) => {
   if (!req.user) return res.sendStatus(401);
   if ((req.user as IUser).accountType != 3) return res.sendStatus(403);
+  next();
 });
 
 ClassesRouter.post('/create', (req, res) => {

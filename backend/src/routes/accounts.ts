@@ -7,9 +7,10 @@ const SALT_WORK_FACTOR = 10;
 
 const AccountsRouter = express.Router();
 
-AccountsRouter.all('', (req, res) => {
+AccountsRouter.all('/*', (req, res, next) => {
   if (!req.user) return res.sendStatus(401);
   if ((req.user as IUser).accountType != 3) return res.sendStatus(403);
+  next();
 });
 
 AccountsRouter.post('/create', function (req, res) {

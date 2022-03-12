@@ -11,7 +11,7 @@
         </b-nav>
       </b-card-header>
       <b-card-body>
-        <router-view />
+        <router-view :user="user" />
       </b-card-body>
     </b-card>
   </div>

@@ -83,12 +83,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { IBVModal } from '../services/interfaces';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IBVModal, IUser } from '../services/interfaces';
 import { findAccounts, getClasses, addClass, removeClassFromTeacher } from '../services/utils';
 
 @Component
 export default class TeacherManagement extends Vue implements IBVModal {
+  @Prop(Object) user!: IUser;
+
   classes = [];
   accounts = null;
   showAccount = {

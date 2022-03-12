@@ -56,12 +56,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { IBVModal } from '../services/interfaces';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IBVModal, IUser } from '../services/interfaces';
 import { createClass, getClasses, deleteClass } from '../services/utils';
 
 @Component
 export default class ClassManagement extends Vue implements IBVModal {
+  @Prop(Object) user!: IUser;
+
   createForm = {
     number: 1,
     liter: '',

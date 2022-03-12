@@ -187,12 +187,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { IBVModal } from '../services/interfaces';
+import { Prop, Component, Vue } from 'vue-property-decorator';
+import { IBVModal, IUser } from '../services/interfaces';
 import { createAccount, transliterate, findAccounts, editAccount, resetPassword, getClasses } from '../services/utils';
 
 @Component
 export default class AccountManagement extends Vue implements IBVModal {
+  @Prop(Object) user!: IUser;
+
   createForm = {
     type: 0,
     name: '',
