@@ -5,6 +5,8 @@ import passport from 'passport';
 import session from 'express-session';
 import mongoose from 'mongoose';
 import path from 'path';
+import MongoStore from 'connect-mongo';
+
 import './passport';
 
 import UserRouter from './routes/user';
@@ -18,11 +20,28 @@ const app = express();
 
 const PORT = 3080;
 
+mongoose.connect(
+  'mongodb://127.0.0.1:27017/usuko',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+  },
+  err => {
+    if (err) throw err;
+    console.log(`Database successfully connected`);
+  },
+);
+
 app.use(
   session({
     secret: 'adjosiYhrfawojwhDASda3dfasf',
     resave: false,
     saveUninitialized: false,
+    store: new MongoStore({
+      mongoUrl: 'mongodb://127.0.0.1:27017/usuko',
+    }),
   }),
 );
 
@@ -52,17 +71,3 @@ app.use('/api/tasks', TaskRouter);
 app.listen(PORT, () => {
   console.log(`Server is running at ::${PORT}`);
 });
-
-mongoose.connect(
-  'mongodb://127.0.0.1:27017/usuko',
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: true,
-  },
-  err => {
-    if (err) throw err;
-    console.log(`Database successfully connected`);
-  },
-);
