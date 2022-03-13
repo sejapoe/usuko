@@ -30,6 +30,10 @@ const routes: Array<RouteConfig> = [
       { path: 'admin/accounts', component: AccountManagement },
       { path: 'admin/classes', component: ClassManagement },
       { path: 'teacher/tasks', component: TaskManagement },
+      {
+        path: 'teacher/tasks/:id',
+        component: TaskManagement,
+      },
       { path: 'teacher/journal', component: AccountManagement },
       { path: 'chat', component: ClassManagement },
     ],

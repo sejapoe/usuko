@@ -73,7 +73,7 @@
 
     <ul>
       <li v-for="item in tasks" :key="item._id">
-        <a @click="showInfoModal(item)" href="#"
+        <a :href="`/profile/teacher/tasks/${item._id}`"
           >{{ item.title }}
           {{ item.files.length == 0 ? '' : `(${item.files.length} файл${quantitySuffix(item.files.length)})` }}</a
         >
@@ -83,20 +83,62 @@
     <b-modal
       id="modal-info"
       ref="modal-info"
-      :title="`Класс ${showClass.num} ${showClass.liter}`"
+      :title="showTask.title"
       header-bg-variant="dark"
       body-bg-variant="dark"
       footer-bg-variant="dark"
-      @hidden="showClass = {}"
+      @hidden="
+        showTask = {};
+        $router.push('/profile/teacher/tasks');
+      "
       ok-only
     >
-      Количество учеников: {{ showClass.pupils.length }}
-
+      {{ showTask.description }}<br />
+      Классы: <span v-html="showTask.classesFormated" /><br />
+      Сдать до: {{ showTask.deadlineString }}<br />
+      {{ showTask.files.length == 0 ? `К заданию не прикреплены файлы:` : `Файлы:` }}
+      <ul>
+        <li v-for="item in showTask.files" :key="item">
+          <a :href="`/files/tasks/${showTask._id}/${item.split('/').slice(-1)[0]}`">{{
+            item.split('/').slice(-1)[0]
+          }}</a>
+          <a @click="removeFileFromTask(item)" href="#"> [delete]</a>
+        </li>
+        <li>
+          <a @click="$root.$emit('bv::show::modal', 'modal-addfile')" href="#">Добавить файл</a>
+        </li>
+      </ul>
       <template #modal-footer="{ ok }">
         <b-button size="sm" variant="danger" @click="deleteClass()"> Удалить класс </b-button>
         <b-button size="sm" variant="info" @click="transferClass()"> Перевести класс </b-button>
         <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
       </template>
+    </b-modal>
+
+    <b-modal
+      id="modal-addfile"
+      ref="modal-addfile"
+      title="Добавить файл"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      @show="addFiles = []"
+      @hidden="addFiles = []"
+      @ok="handleAddFilesModalOk"
+    >
+      <form ref="addFilesForm">
+        <b-form-group label="Прикрепить файл(ы)">
+          <b-form-file
+            name="file"
+            v-model="addFiles"
+            placeholder="Выберите файлы или перенесите их сюда"
+            drop-placeholder="Прикрепить файл"
+            multiple
+            required
+          >
+          </b-form-file>
+        </b-form-group>
+      </form>
     </b-modal>
   </div>
 </template>
@@ -104,7 +146,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IBVModal, IUser } from '../services/interfaces';
-import { createTask, getClasses, deleteClass, getTasks, quantitySuffix } from '../services/utils';
+import {
+  createTask,
+  getClasses,
+  deleteClass,
+  getTasks,
+  quantitySuffix,
+  removeFileFromTask,
+  addFilesToTask,
+} from '../services/utils';
 
 @Component
 export default class TaskManagement extends Vue implements IBVModal {
@@ -118,20 +168,26 @@ export default class TaskManagement extends Vue implements IBVModal {
     time: '',
     files: [],
   };
+  addFiles = [];
   allClasses = [];
   classes = [];
   tasks = [];
-  showClass = {
+  showTask = {
     _id: '',
-    num: 0,
-    liter: '',
-    pupils: [],
+    title: '',
+    description: '',
+    classes: [],
+    date: 0,
+    time: '',
+    files: [],
+    classesFormated: '',
+    deadlineString: '',
   };
   quantitySuffix = quantitySuffix;
 
-  mounted() {
-    this.getAllClasses();
-    this.getTasks();
+  async mounted() {
+    await this.getAllClasses();
+    await this.getTasks();
   }
 
   resetCreateModal() {
@@ -179,26 +235,77 @@ export default class TaskManagement extends Vue implements IBVModal {
   getTasks() {
     getTasks().then(async response => {
       this.tasks = await response.json();
-      console.log(this.tasks);
+      if (this.$route.params.id) {
+        this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
+      }
     });
   }
 
-  getAllClasses() {
-    getClasses().then(async response => {
+  async getAllClasses() {
+    await getClasses().then(async response => {
       this.allClasses = await response.json();
+      await this.getTeacherClasses();
     });
   }
 
   showInfoModal(item: Record<string, unknown>) {
-    this.showClass = item;
+    this.showTask = item;
+    this.showTask.classesFormated = item.classes
+      .map(a => {
+        const cl = this.allClasses.find(b => b._id == a);
+        return `<a href="/profile/teacher/journal/${a}">${cl.num} ${cl.liter}</a>`;
+      })
+      .join(', ');
+    this.showTask.deadlineString = new Date(this.showTask.deadline).toLocaleString('ru-RU');
 
     this.$root.$emit('bv::show::modal', 'modal-info');
   }
 
   deleteClass() {
-    deleteClass(this.showClass._id).then(() => {
+    deleteClass(this.showTask._id).then(() => {
       this.getClasses();
       this.$root.$emit('bv::hide::modal', 'modal-info');
+    });
+  }
+
+  removeFileFromTask(file) {
+    removeFileFromTask(this.showTask._id, file).then(async response => {
+      await this.getTasks();
+      this.showTask = this.tasks.find(a => a._id == this.showTask._id);
+    });
+  }
+
+  handleAddFilesModalOk(bvModalEvt: Event) {
+    if (!(this.$refs.addFilesForm as HTMLFormElement).reportValidity()) {
+      bvModalEvt.preventDefault();
+      return;
+    }
+
+    addFilesToTask(this.showTask._id, new FormData(this.$refs.addFilesForm as HTMLFormElement)).then(async response => {
+      if (response.status == 201) {
+        const body = await response.json();
+        if (body.errors) {
+          this.$bvToast.toast(
+            `${body.errors} файл${quantitySuffix(body.errors)} не удалось загрузить (одинаковые имена файлов).`,
+            {
+              title: `Загрузка файлов`,
+              autoHideDelay: 3000,
+              variant: 'danger',
+              toaster: 'b-toaster-bottom-right',
+            },
+          );
+        }
+      } else {
+        this.$bvToast.toast(`Все файлы успешно загружены`, {
+          title: `Загрузка файлов`,
+          autoHideDelay: 3000,
+          variant: 'success',
+          toaster: 'b-toaster-bottom-right',
+        });
+      }
+
+      await this.getTasks();
+      this.showTask = this.tasks.find(a => a._id == this.showTask._id);
     });
   }
 }

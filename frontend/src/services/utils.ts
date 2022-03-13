@@ -71,7 +71,7 @@ export async function resetPassword(_id: string) {
   });
   return await res.text();
 }
-
+removeFileFromTask;
 export function transliterate(str: string): string {
   return str
     .replace(/\u0401/g, 'YO')
@@ -203,4 +203,25 @@ export async function createTask(data: FormData): Promise<Response> {
 
 export async function getTasks() {
   return await fetch('/api/tasks/get');
+}
+
+export async function removeFileFromTask(taskId: string, file: string): Promise<Response> {
+  return fetch('/api/tasks/removeFile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      _id: taskId,
+      file,
+    }),
+  });
+}
+
+export async function addFilesToTask(id: string, data: FormData): Promise<Response> {
+  data.append('id', id);
+  return await fetch('/api/tasks/addFiles', {
+    method: 'POST',
+    body: data,
+  });
 }
