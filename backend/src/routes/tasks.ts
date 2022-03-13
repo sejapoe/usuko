@@ -89,6 +89,19 @@ TaskRouter.post('/addFiles', upload.array('file'), (req, res) => {
   });
 });
 
+TaskRouter.post('/changeDeadline', upload.none(), (req, res) => {
+  Task.findOne({
+    _id: req.body.id,
+  }).then(task => {
+    if (!task) return;
+    const deadline = `${req.body.date}T${req.body.time}`;
+    task.deadline = new Date(deadline);
+    task.save().then(() => {
+      res.sendStatus(200);
+    });
+  });
+});
+
 TaskRouter.get('/get', (req, res) => {
   const user = req.user as IUser;
   Task.find({

@@ -225,3 +225,11 @@ export async function addFilesToTask(id: string, data: FormData): Promise<Respon
     body: data,
   });
 }
+
+export async function changeTaskDeadline(id: string, data: FormData): Promise<Response> {
+  data.append('id', id);
+  return await fetch('/api/tasks/changeDeadline', {
+    method: 'POST',
+    body: data,
+  });
+}

@@ -95,7 +95,8 @@
     >
       {{ showTask.description }}<br />
       Классы: <span v-html="showTask.classesFormated" /><br />
-      Сдать до: {{ showTask.deadlineString }}<br />
+      Сдать до: {{ showTask.deadlineString }}
+      <a @click="$root.$emit('bv::show::modal', 'modal-change-deadline')" href="#">[перенести]</a><br />
       {{ showTask.files.length == 0 ? `К заданию не прикреплены файлы:` : `Файлы:` }}
       <ul>
         <li v-for="item in showTask.files" :key="item">
@@ -140,6 +141,35 @@
         </b-form-group>
       </form>
     </b-modal>
+
+    <b-modal
+      id="modal-change-deadline"
+      ref="modal-change-deadline"
+      title="Изменить время сдачи"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      @show="resetChangeDeadlineModal"
+      @hidden="resetChangeDeadlineModal"
+      @ok="handleChangeDeadlineModalOk"
+    >
+      <form ref="changeDeadlineForm">
+        <b-form-group label="Дата сдачи">
+          <b-form-datepicker
+            name="date"
+            v-model="changeDeadlineForm.date"
+            :min="new Date()"
+            locale="ru-ru"
+            :start-weekday="1"
+            value-as-date
+          ></b-form-datepicker>
+        </b-form-group>
+
+        <b-form-group label="Время сдачи">
+          <b-form-timepicker name="time" v-model="changeDeadlineForm.time" hourCycle="h23"></b-form-timepicker>
+        </b-form-group>
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -154,6 +184,7 @@ import {
   quantitySuffix,
   removeFileFromTask,
   addFilesToTask,
+  changeTaskDeadline,
 } from '../services/utils';
 
 @Component
@@ -183,6 +214,10 @@ export default class TaskManagement extends Vue implements IBVModal {
     classesFormated: '',
     deadlineString: '',
   };
+  changeDeadlineForm = {
+    time: '',
+    date: '',
+  };
   quantitySuffix = quantitySuffix;
 
   async mounted() {
@@ -196,7 +231,7 @@ export default class TaskManagement extends Vue implements IBVModal {
     this.createForm.classes = [];
     const now = new Date();
     this.createForm.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    this.createForm.time = '17:00';
+    this.createForm.time = now.toLocaleTimeString('en-US', { hour12: false });
     this.files = [];
     this.getTeacherClasses();
   }
@@ -307,6 +342,21 @@ export default class TaskManagement extends Vue implements IBVModal {
       await this.getTasks();
       this.showTask = this.tasks.find(a => a._id == this.showTask._id);
     });
+  }
+
+  resetChangeDeadlineModal() {
+    const now = new Date();
+    this.changeDeadlineForm.time = now.toLocaleTimeString('en-US', { hour12: false });
+    this.changeDeadlineForm.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
+  handleChangeDeadlineModalOk(bvModalEvt: Event) {
+    changeTaskDeadline(this.showTask._id, new FormData(this.$refs.changeDeadlineForm as HTMLFormElement)).then(
+      async response => {
+        await this.getTasks();
+        this.showTask = this.tasks.find(a => a._id == this.showTask._id);
+      },
+    );
   }
 }
 </script>
