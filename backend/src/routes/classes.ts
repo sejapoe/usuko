@@ -21,10 +21,19 @@ ClassesRouter.post('/create', (req, res) => {
 });
 
 ClassesRouter.post('/delete', (req, res) => {
-  Class.deleteOne({
-    _id: req.body._id,
-  }).then(() => {
-    res.sendStatus(200);
+  User.updateMany(
+    {
+      class: req.body._id,
+    },
+    {
+      class: '',
+    },
+  ).then(() => {
+    Class.deleteOne({
+      _id: req.body._id,
+    }).then(() => {
+      res.sendStatus(200);
+    });
   });
 });
 
