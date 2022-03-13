@@ -69,7 +69,6 @@
         body-bg-variant="dark"
         footer-bg-variant="dark"
         @show="resetFindModal"
-        @hidden="resetFindModal"
         @ok="handleFindModalOk"
       >
         <form ref="findForm">
