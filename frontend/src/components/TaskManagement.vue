@@ -89,7 +89,7 @@
       footer-bg-variant="dark"
       @hidden="
         showTask = {};
-        $router.push('/profile/teacher/tasks');
+        getOut();
       "
       ok-only
     >
@@ -110,8 +110,8 @@
         </li>
       </ul>
       <template #modal-footer="{ ok }">
-        <b-button size="sm" variant="danger" @click="deleteClass()"> Удалить класс </b-button>
-        <b-button size="sm" variant="info" @click="transferClass()"> Перевести класс </b-button>
+        <b-button size="sm" variant="danger" @click="deleteTask()"> Удалить задание </b-button>
+        <b-button size="sm" variant="info" @click="archiveTask()"> Архивировать </b-button>
         <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
       </template>
     </b-modal>
@@ -179,13 +179,17 @@ import { IBVModal, IUser } from '../services/interfaces';
 import {
   createTask,
   getClasses,
-  deleteClass,
+  deleteTask,
   getTasks,
   quantitySuffix,
   removeFileFromTask,
   addFilesToTask,
   changeTaskDeadline,
 } from '../services/utils';
+
+function getOut() {
+  window.location.href = '/profile/teacher/tasks';
+}
 
 @Component
 export default class TaskManagement extends Vue implements IBVModal {
@@ -219,6 +223,7 @@ export default class TaskManagement extends Vue implements IBVModal {
     date: '',
   };
   quantitySuffix = quantitySuffix;
+  getOut = getOut;
 
   async mounted() {
     await this.getAllClasses();
@@ -267,9 +272,10 @@ export default class TaskManagement extends Vue implements IBVModal {
     });
   }
 
-  getTasks() {
-    getTasks().then(async response => {
+  async getTasks() {
+    await getTasks().then(async response => {
       this.tasks = await response.json();
+      console.log(222);
       if (this.$route.params.id) {
         this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
       }
@@ -296,10 +302,11 @@ export default class TaskManagement extends Vue implements IBVModal {
     this.$root.$emit('bv::show::modal', 'modal-info');
   }
 
-  deleteClass() {
-    deleteClass(this.showTask._id).then(() => {
-      this.getClasses();
-      this.$root.$emit('bv::hide::modal', 'modal-info');
+  deleteTask() {
+    this.$root.$emit('bv::hide::modal', 'modal-info');
+    deleteTask(this.showTask._id).then(async () => {
+      await this.getTasks();
+      this.$router.push('/profile/teacher/tasks');
     });
   }
 

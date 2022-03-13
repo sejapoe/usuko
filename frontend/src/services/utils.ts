@@ -233,3 +233,15 @@ export async function changeTaskDeadline(id: string, data: FormData): Promise<Re
     body: data,
   });
 }
+
+export async function deleteTask(id: string): Promise<Response> {
+  return fetch('/api/tasks/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      _id: id,
+    }),
+  });
+}

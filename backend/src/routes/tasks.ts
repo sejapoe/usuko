@@ -5,7 +5,6 @@ import path from 'path';
 import Class from '../models/Class';
 import Task from '../models/Task';
 import User, { IUser } from '../models/User';
-import { timingSafeEqual } from 'crypto';
 
 const upload = multer({ dest: './data/tasks' });
 
@@ -99,6 +98,21 @@ TaskRouter.post('/changeDeadline', upload.none(), (req, res) => {
     task.save().then(() => {
       res.sendStatus(200);
     });
+  });
+});
+
+TaskRouter.post('/delete', (req, res) => {
+  const dir = path.resolve(`./data/tasks/${req.body._id}`);
+  if (fs.existsSync(dir)) {
+    for (const file of fs.readdirSync(dir)) {
+      fs.rmSync(path.join(dir, file));
+    }
+    fs.rmdirSync(dir);
+  }
+  Task.deleteOne({
+    _id: req.body._id,
+  }).then(() => {
+    res.sendStatus(200);
   });
 });
 
