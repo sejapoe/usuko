@@ -110,7 +110,16 @@
         </li>
       </ul>
       <template #modal-footer="{ ok }">
-        <b-button size="sm" variant="danger" @click="deleteTask()"> Удалить задание </b-button>
+        <b-button
+          size="sm"
+          variant="danger"
+          @click="deleteTask()"
+          v-b-popover.hover.top="
+            `Удаление задания приведет к удалению всех ответов на него. Возможно, вам следует архивировать его.`
+          "
+        >
+          Удалить задание
+        </b-button>
         <b-button size="sm" variant="info" @click="archiveTask()"> Архивировать </b-button>
         <b-button size="sm" variant="success" @click="ok()"> OK </b-button>
       </template>
