@@ -253,3 +253,15 @@ export async function addAnswer(id: string, data: FormData): Promise<Response> {
     body: data,
   });
 }
+
+export async function resolveAnswers(id: string): Promise<Response> {
+  return await fetch('/api/tasks/resolveAnswers', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id,
+    }),
+  });
+}

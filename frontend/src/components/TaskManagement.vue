@@ -109,6 +109,9 @@
           <a @click="$root.$emit('bv::show::modal', 'modal-addfile')" href="#">Добавить файл</a>
         </li>
       </ul>
+      <a v-if="showTask.answers.length != 0" @click="$root.$emit('bv::show::modal', 'modal-answers')" href="#"
+        >Просмотреть ответы ({{ showTask.answers.length }}/{{ showTask.totalStudents }})</a
+      >
       <template #modal-footer="{ ok }">
         <b-button
           size="sm"
@@ -179,6 +182,25 @@
         </b-form-group>
       </form>
     </b-modal>
+
+    <b-modal
+      id="modal-answers"
+      ref="modal-answers"
+      title="Ответы на задание"
+      header-bg-variant="dark"
+      body-bg-variant="dark"
+      footer-bg-variant="dark"
+      centered
+      @show="resolveAnswers"
+    >
+      <ul>
+        <li v-for="item in answers" :key="item.user._id">
+          <a :href="`/files/${item.path}`"
+            >{{ item.user.name }} {{ item.user.lastname }} ({{ item.class.num }} {{ item.class.liter }})</a
+          >
+        </li>
+      </ul>
+    </b-modal>
   </div>
 </template>
 
@@ -194,6 +216,7 @@ import {
   removeFileFromTask,
   addFilesToTask,
   changeTaskDeadline,
+  resolveAnswers,
 } from '../services/utils';
 
 function getOut() {
@@ -224,13 +247,16 @@ export default class TaskManagement extends Vue implements IBVModal {
     date: 0,
     time: '',
     files: [],
+    answers: [],
     classesFormated: '',
     deadlineString: '',
+    totalStudents: 0,
   };
   changeDeadlineForm = {
     time: '',
     date: '',
   };
+  answers = [];
   quantitySuffix = quantitySuffix;
   getOut = getOut;
 
@@ -306,6 +332,10 @@ export default class TaskManagement extends Vue implements IBVModal {
       })
       .join(', ');
     this.showTask.deadlineString = new Date(this.showTask.deadline).toLocaleString('ru-RU');
+    this.showTask.totalStudents = 0;
+    for (item of this.allClasses.filter(a => this.showTask.classes.includes(a._id))) {
+      this.showTask.totalStudents += item.pupils.length;
+    }
 
     this.$root.$emit('bv::show::modal', 'modal-info');
   }
@@ -372,6 +402,12 @@ export default class TaskManagement extends Vue implements IBVModal {
         this.showTask = this.tasks.find(a => a._id == this.showTask._id);
       },
     );
+  }
+
+  resolveAnswers() {
+    resolveAnswers(this.showTask._id).then(async response => {
+      this.answers = await response.json();
+    });
   }
 }
 </script>

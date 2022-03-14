@@ -169,6 +169,37 @@ TaskRouter.post('/addAnswer', upload.array('file'), (req, res) => {
   });
 });
 
+TaskRouter.post('/resolveAnswers', (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
+
+  Task.findOne({
+    _id: req.body.id,
+  }).then(async task => {
+    if (!task) return res.sendStatus(404);
+    const trueAnswers = [];
+    for (const answerPath of task.answers) {
+      const userId = answerPath.split('/').slice(-2)[0];
+      const user = await User.findOne({
+        _id: userId,
+      });
+      if (user) {
+        const cl = await Class.findOne({
+          _id: user.class,
+        });
+        if (cl) {
+          const answer = {
+            user,
+            class: cl,
+            path: answerPath.split('/').slice(-5).join('/'),
+          };
+          trueAnswers.push(answer);
+        }
+      }
+    }
+    res.send(trueAnswers);
+  });
+});
+
 function isTaskAnsweredByUser(task: ITask, user: IUser): boolean {
   return task.answers.some(b => b.split('/').slice(-2)[0] == user._id);
 }
