@@ -100,7 +100,7 @@
       {{ showTask.files.length == 0 ? `К заданию не прикреплены файлы:` : `Файлы:` }}
       <ul>
         <li v-for="item in showTask.files" :key="item">
-          <a :href="`/files/tasks/${showTask._id}/${item.split('/').slice(-1)[0]}`">{{
+          <a :href="`/api/files/tasks/${showTask._id}/${item.split('/').slice(-1)[0]}`">{{
             item.split('/').slice(-1)[0]
           }}</a>
           <a @click="removeFileFromTask(item)" href="#"> [delete]</a>
@@ -195,7 +195,7 @@
     >
       <ul>
         <li v-for="item in answers" :key="item.user._id">
-          <a :href="`/files/${item.path}`"
+          <a :href="`/api/files/${item.path}`"
             >{{ item.user.name }} {{ item.user.lastname }} ({{ item.class.num }} {{ item.class.liter }})</a
           >
         </li>

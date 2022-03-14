@@ -15,6 +15,7 @@ import AccountsRouter from './routes/accounts';
 import ClassesRouter from './routes/classes';
 import { IUser } from './models/User';
 import TaskRouter from './routes/tasks';
+import FileRouter from './routes/files';
 
 const app = express();
 
@@ -67,6 +68,7 @@ app.use('/api/auth', AuthRouter);
 app.use('/api/accounts', AccountsRouter);
 app.use('/api/classes', ClassesRouter);
 app.use('/api/tasks', TaskRouter);
+app.use('/api/files', FileRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at ::${PORT}`);

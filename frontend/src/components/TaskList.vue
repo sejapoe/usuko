@@ -40,7 +40,7 @@
       {{ showTask.files.length == 0 ? `К заданию не прикреплены файлы.` : `Файлы:` }}
       <ul>
         <li v-for="item in showTask.files" :key="item">
-          <a :href="`/files/tasks/${showTask._id}/${item.split('/').slice(-1)[0]}`">{{
+          <a :href="`/api/files/tasks/${showTask._id}/${item.split('/').slice(-1)[0]}`">{{
             item.split('/').slice(-1)[0]
           }}</a>
         </li>
