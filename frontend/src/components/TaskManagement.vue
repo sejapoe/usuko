@@ -284,7 +284,6 @@ export default class TaskManagement extends Vue implements IBVModal {
   async getTasks() {
     await getTasks().then(async response => {
       this.tasks = await response.json();
-      console.log(222);
       if (this.$route.params.id) {
         this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
       }
