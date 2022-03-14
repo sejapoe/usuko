@@ -14,6 +14,11 @@
           <b-nav-item to="/profile/teacher/journal" exact exact-active-class="active"> Журнал </b-nav-item>
           <b-nav-item to="/profile/chat" exact exact-active-class="active"> Чат </b-nav-item>
         </b-nav>
+        <b-nav v-if="user.accountType == 0" card-header tabs justified>
+          <b-nav-item to="/profile/student/tasks" exact exact-active-class="active"> Задания </b-nav-item>
+          <b-nav-item to="/profile/student/dairy" exact exact-active-class="active"> Дневнник </b-nav-item>
+          <b-nav-item to="/profile/chat" exact exact-active-class="active"> Чат </b-nav-item>
+        </b-nav>
       </b-card-header>
       <b-card-body>
         <router-view :user="user" />

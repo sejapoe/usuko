@@ -3,20 +3,20 @@ import multer from 'multer';
 import fs, { readdirSync } from 'fs';
 import path from 'path';
 import Class from '../models/Class';
-import Task from '../models/Task';
+import Task, { ITask } from '../models/Task';
 import User, { IUser } from '../models/User';
 
-const upload = multer({ dest: './data/tasks' });
+const upload = multer({ dest: './data' });
 
 const TaskRouter = express.Router();
 
 TaskRouter.all('', (req, res, next) => {
   if (!req.user) return res.sendStatus(401);
-  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   next();
 });
 
 TaskRouter.post('/create', upload.array('file'), (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   req.body.deadline = `${req.body.date}T${req.body.time}`;
   delete req.body.date;
   delete req.body.time;
@@ -38,6 +38,7 @@ TaskRouter.post('/create', upload.array('file'), (req, res) => {
 });
 
 TaskRouter.post('/removeFile', (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   Task.findOne({
     _id: req.body._id,
   }).then(task => {
@@ -55,6 +56,7 @@ TaskRouter.post('/removeFile', (req, res) => {
 });
 
 TaskRouter.post('/addFiles', upload.array('file'), (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   Task.findOne({
     _id: req.body.id,
   }).then(task => {
@@ -89,6 +91,7 @@ TaskRouter.post('/addFiles', upload.array('file'), (req, res) => {
 });
 
 TaskRouter.post('/changeDeadline', upload.none(), (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   Task.findOne({
     _id: req.body.id,
   }).then(task => {
@@ -102,8 +105,19 @@ TaskRouter.post('/changeDeadline', upload.none(), (req, res) => {
 });
 
 TaskRouter.post('/delete', (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
   const dir = path.resolve(`./data/tasks/${req.body._id}`);
   if (fs.existsSync(dir)) {
+    const dirAnswers = path.join(dir, 'answers');
+    if (fs.existsSync(dirAnswers)) {
+      for (const dirUsers of fs.readdirSync(dirAnswers)) {
+        for (const file of fs.readdirSync(path.join(dirAnswers, dirUsers))) {
+          fs.rmSync(path.join(dirAnswers, dirUsers, file));
+        }
+        fs.rmdirSync(path.join(dirAnswers, dirUsers));
+      }
+      fs.rmdirSync(dirAnswers);
+    }
     for (const file of fs.readdirSync(dir)) {
       fs.rmSync(path.join(dir, file));
     }
@@ -118,11 +132,45 @@ TaskRouter.post('/delete', (req, res) => {
 
 TaskRouter.get('/get', (req, res) => {
   const user = req.user as IUser;
-  Task.find({
-    teacher: user._id,
-  }).then(tasks => {
-    res.send(tasks);
+  if (user.accountType == 1) {
+    Task.find({
+      teacher: user._id,
+    }).then(tasks => {
+      res.send(tasks);
+    });
+  } else if (user.accountType == 0) {
+    if (user.class == '') return res.send([]);
+    Task.find({
+      classes: user.class,
+    }).then(tasks => {
+      res.send(tasks);
+    });
+  }
+});
+
+TaskRouter.post('/addAnswer', upload.array('file'), (req, res) => {
+  if ((req.user as IUser).accountType != 0) return res.sendStatus(403);
+  Task.findOne({
+    _id: req.body.id,
+  }).then(task => {
+    if (!task || !req.files || !(req.files instanceof Array)) return res.sendStatus(500);
+    if (isTaskAnsweredByUser(task, req.user as IUser)) return res.sendStatus(403);
+    const dir = path.resolve(`./data/tasks/${task._id}/answers/${(req.user as IUser)._id}`);
+    fs.mkdirSync(dir, { recursive: true });
+    for (const file of req.files) {
+      const filePath = path.join(file.path);
+      const newPath = path.join(dir, file.originalname);
+      fs.renameSync(filePath, newPath);
+      task.answers.push(newPath);
+    }
+    task.save().then(() => {
+      res.sendStatus(200);
+    });
   });
 });
+
+function isTaskAnsweredByUser(task: ITask, user: IUser): boolean {
+  return task.answers.some(b => b.split('/').slice(-2)[0] == user._id);
+}
 
 export default TaskRouter;

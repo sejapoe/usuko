@@ -7,6 +7,7 @@ import TeacherManagement from '@/components/TeacherManagement.vue';
 import AccountManagement from '@/components/AccountManagement.vue';
 import ClassManagement from '@/components/ClassManagement.vue';
 import TaskManagement from '@/components/TaskManagement.vue';
+import TaskList from '@/components/TaskList.vue';
 
 Vue.use(VueRouter);
 
@@ -35,6 +36,11 @@ const routes: Array<RouteConfig> = [
         component: TaskManagement,
       },
       { path: 'teacher/journal', component: AccountManagement },
+      { path: 'student/tasks', component: TaskList },
+      {
+        path: 'student/tasks/:id',
+        component: TaskList,
+      },
       { path: 'chat', component: ClassManagement },
     ],
   },

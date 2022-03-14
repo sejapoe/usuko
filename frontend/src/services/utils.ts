@@ -245,3 +245,11 @@ export async function deleteTask(id: string): Promise<Response> {
     }),
   });
 }
+
+export async function addAnswer(id: string, data: FormData): Promise<Response> {
+  data.append('id', id);
+  return await fetch('/api/tasks/addAnswer', {
+    method: 'POST',
+    body: data,
+  });
+}
