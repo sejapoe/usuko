@@ -7,7 +7,7 @@ export interface ITask extends Document {
   classes: ObjectId[];
   teacher: ObjectId;
   files: string[];
-  answers: string[];
+  answers: ObjectId[];
 }
 
 export const TaskSchema = new Schema<ITask>(
@@ -15,10 +15,10 @@ export const TaskSchema = new Schema<ITask>(
     title: { type: String, required: true },
     description: String,
     deadline: Date,
-    classes: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    classes: [{ type: Schema.Types.ObjectId, ref: 'class' }],
     teacher: { type: Schema.Types.ObjectId, ref: 'user' },
     files: [String],
-    answers: [String],
+    answers: [{ type: Schema.Types.ObjectId, ref: 'answer' }],
   },
   {
     versionKey: false,

@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, ObjectId } from 'mongoose';
 import bcrypt from 'bcrypt';
 import Class from './Class';
 
@@ -18,7 +18,7 @@ export interface IUser extends Document {
   subject: string;
   password: string;
   accountType: EAccountType;
-  class: string;
+  class: ObjectId;
   classes: string[];
   comparePasswords(candidatePassword: string): boolean;
 }
@@ -35,7 +35,7 @@ export const UserSchema = new Schema<IUser>(
       default: EAccountType.Student,
       enum: Object.values(EAccountType),
     },
-    class: String,
+    class: { type: Schema.Types.ObjectId, ref: 'class' },
     classes: [String],
   },
   {
@@ -68,7 +68,7 @@ function updatePupilsInClasses() {
     classes.forEach(cl => (cl.teachers = []));
     m.find().then(users => {
       users.forEach(u => {
-        if (u.class && u.class !== '') {
+        if (u.class) {
           classes.find(cl => cl._id == u.class)?.pupils.push(u._id);
         }
         u.classes.forEach(c => classes.find(cl => cl._id == c)?.teachers.push(u._id));

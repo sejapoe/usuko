@@ -196,7 +196,7 @@
       <ul>
         <li v-for="item in answers" :key="item.user._id">
           <a :href="`/api/files/${item.path}`"
-            >{{ item.user.name }} {{ item.user.lastname }} ({{ item.class.num }} {{ item.class.liter }})</a
+            >{{ item.user.name }} {{ item.user.lastname }} ({{ item.user.class.num }} {{ item.user.class.liter }})</a
           >
         </li>
       </ul>
