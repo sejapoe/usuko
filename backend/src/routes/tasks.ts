@@ -124,11 +124,18 @@ TaskRouter.post('/delete', (req, res) => {
     }
     fs.rmdirSync(dir);
   }
-  Task.deleteOne({
+  Task.findOne({
     _id: req.body._id,
-  }).then(() => {
-    res.sendStatus(200);
-  });
+  })
+    .populate({ path: 'answers' })
+    .orFail()
+    .then(async task => {
+      for (const answer of task.answers) {
+        await answer.delete();
+      }
+      await task.delete();
+      res.sendStatus(200);
+    });
 });
 
 TaskRouter.get('/get', (req, res) => {
