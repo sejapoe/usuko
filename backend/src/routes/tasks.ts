@@ -5,7 +5,7 @@ import path from 'path';
 import Class from '../models/Class';
 import Task, { ITask } from '../models/Task';
 import User, { IUser } from '../models/User';
-import Answer from '../models/Answer';
+import Answer, { IAnswer } from '../models/Answer';
 
 const upload = multer({ dest: './data' });
 
@@ -153,30 +153,40 @@ TaskRouter.post('/addAnswer', upload.array('file'), (req, res) => {
   if ((req.user as IUser).accountType != 0) return res.sendStatus(403);
   Task.findOne({
     _id: req.body.id,
-  }).then(task => {
-    if (!task || !req.files || !(req.files instanceof Array)) return res.sendStatus(500);
-    if (isTaskAnsweredByUser(task, req.user as IUser)) return res.sendStatus(403);
-    const dir = path.resolve(`./data/tasks/${task._id}/answers/${(req.user as IUser)._id}`);
-    fs.mkdirSync(dir, { recursive: true });
-    const answers = [];
-    for (const file of req.files) {
-      const filePath = path.join(file.path);
-      const newPath = path.join(dir, file.originalname);
-      fs.renameSync(filePath, newPath);
-      answers.push(newPath);
-    }
-    const answer = new Answer({
-      task: task._id,
-      user: (req.user as IUser)._id,
-      files: answers,
-    });
-    answer.save().then(ans => {
-      task.answers.push(ans._id);
-      task.save().then(() => {
-        res.sendStatus(200);
+  })
+    .populate('answers')
+    .then(task => {
+      if (!task || !req.files || !(req.files instanceof Array)) {
+        return res.sendStatus(500);
+      }
+      if (isTaskAnsweredByUser(task, req.user as IUser)) {
+        for (const file of req.files) {
+          const filePath = path.join(file.path);
+          fs.rmSync(filePath);
+        }
+        return res.sendStatus(403);
+      }
+      const dir = path.resolve(`./data/tasks/${task._id}/answers/${(req.user as IUser)._id}`);
+      fs.mkdirSync(dir, { recursive: true });
+      const answers = [];
+      for (const file of req.files) {
+        const filePath = path.join(file.path);
+        const newPath = path.join(dir, file.originalname);
+        fs.renameSync(filePath, newPath);
+        answers.push(newPath);
+      }
+      const answer = new Answer({
+        task: task._id,
+        user: (req.user as IUser)._id,
+        files: answers,
+      });
+      answer.save().then(ans => {
+        task.answers.push(ans._id);
+        task.save().then(() => {
+          res.sendStatus(200);
+        });
       });
     });
-  });
 });
 
 TaskRouter.post('/resolveAnswers', (req, res) => {
@@ -193,7 +203,7 @@ TaskRouter.post('/resolveAnswers', (req, res) => {
 });
 
 function isTaskAnsweredByUser(task: ITask, user: IUser): boolean {
-  return false; // task.answers.some(b => b.split('/').slice(-2)[0] == user._id);
+  return task.answers.some(b => b.user.toString() == user._id);
 }
 
 export default TaskRouter;

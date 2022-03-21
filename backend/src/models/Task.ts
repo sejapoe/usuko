@@ -1,4 +1,5 @@
-import { Schema, model, Document, ObjectId } from 'mongoose';
+import { Schema, model, Document, ObjectId, PopulatedDoc } from 'mongoose';
+import { IAnswer } from './Answer';
 
 export interface ITask extends Document {
   title: string;
@@ -7,7 +8,7 @@ export interface ITask extends Document {
   classes: ObjectId[];
   teacher: ObjectId;
   files: string[];
-  answers: ObjectId[];
+  answers: PopulatedDoc<IAnswer & Document>[];
 }
 
 export const TaskSchema = new Schema<ITask>(
