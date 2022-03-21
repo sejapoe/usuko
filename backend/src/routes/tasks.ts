@@ -143,16 +143,20 @@ TaskRouter.get('/get', (req, res) => {
   if (user.accountType == 1) {
     Task.find({
       teacher: user._id,
-    }).then(tasks => {
-      res.send(tasks);
-    });
+    })
+      .populate('answers')
+      .then(tasks => {
+        res.send(tasks);
+      });
   } else if (user.accountType == 0) {
     if (!user.class) return res.send([]);
     Task.find({
       classes: user.class,
-    }).then(tasks => {
-      res.send(tasks);
-    });
+    })
+      .populate('answers')
+      .then(tasks => {
+        res.send(tasks);
+      });
   }
 });
 

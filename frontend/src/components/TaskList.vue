@@ -135,7 +135,7 @@ export default class TaskList extends Vue implements IBVModal {
   }
 
   isTaskAnsweredByUser(task) {
-    return task.answers.some(b => b.split('/').slice(-2)[0] == this.user._id);
+    return task.answers.some(b => b.user.toString() == this.user._id);
   }
 
   showInfoModal(item: Record<string, unknown>) {
