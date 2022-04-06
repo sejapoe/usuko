@@ -26,7 +26,7 @@ ClassesRouter.post('/delete', (req, res) => {
       class: req.body._id,
     },
     {
-      class: '',
+      class: undefined,
     },
   ).then(() => {
     Class.deleteOne({
