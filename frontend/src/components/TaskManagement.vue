@@ -195,11 +195,49 @@
     >
       <ul>
         <li v-for="item in answers" :key="item.user._id">
-          <a :href="`/api/files/${item.path}`"
+          <a @click="revealedAnswer = revealedAnswer == item.user._id ? '' : item.user._id" :href="`#`"
             >{{ item.user.name }} {{ item.user.lastname }} ({{ item.user.class.num }} {{ item.user.class.liter }})</a
           >
+          <template v-if="revealedAnswer == item.user._id">
+            <br />
+            <ul>
+              <li v-for="jtem in item.files" :key="jtem">
+                <a
+                  :href="`/api/files/tasks/${showTask._id}/answers/${item.user._id}/${jtem.split('/').slice(-1)[0]}`"
+                  >{{ jtem.split('/').slice(-1)[0] }}</a
+                >
+              </li>
+            </ul>
+            <template v-if="!item.mark && !unsavedMarks[item._id]">
+              Оценить: <a v-for="mark in [2, 3, 4, 5]" :key="mark" @click="setMark(mark, item)" href="#">{{ mark }} </a>
+            </template>
+            <template v-else> Оценка: {{ item.mark || unsavedMarks[item._id] }} </template>
+          </template>
         </li>
       </ul>
+
+      <template #modal-footer="{ ok, cancel }">
+        <b-button size="sm" variant="info" @click="saveMarks()" :disabled="!hasUnsavedMarks"> Применить </b-button>
+        <b-button
+          size="sm"
+          @click="
+            resetMarks();
+            cancel();
+          "
+        >
+          Отмена
+        </b-button>
+        <b-button
+          size="sm"
+          variant="success"
+          @click="
+            saveMarks();
+            ok();
+          "
+        >
+          OK
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -217,6 +255,7 @@ import {
   addFilesToTask,
   changeTaskDeadline,
   resolveAnswers,
+  saveMarks,
 } from '../services/utils';
 
 function getOut() {
@@ -257,6 +296,9 @@ export default class TaskManagement extends Vue implements IBVModal {
     date: '',
   };
   answers = [];
+  revealedAnswer = '';
+  hasUnsavedMarks = false;
+  unsavedMarks = {};
   quantitySuffix = quantitySuffix;
   getOut = getOut;
 
@@ -408,6 +450,25 @@ export default class TaskManagement extends Vue implements IBVModal {
     resolveAnswers(this.showTask._id).then(async response => {
       this.answers = await response.json();
     });
+  }
+
+  setMark(mark, answer) {
+    this.hasUnsavedMarks = true;
+    this.$set(this.unsavedMarks, answer._id, mark);
+  }
+
+  saveMarks() {
+    saveMarks(this.unsavedMarks).then(response => {
+      // maybe notification?
+      this.resolveAnswers();
+      this.hasUnsavedMarks = false;
+      this.unsavedMarks = {};
+    });
+  }
+
+  resetMarks() {
+    this.hasUnsavedMarks = false;
+    this.unsavedMarks = {};
   }
 }
 </script>

@@ -265,3 +265,13 @@ export async function resolveAnswers(id: string): Promise<Response> {
     }),
   });
 }
+
+export async function saveMarks(marks: Record<string, number>) {
+  return await fetch('/api/tasks/saveMarks', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(marks),
+  });
+}

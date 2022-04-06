@@ -2,10 +2,9 @@ import express from 'express';
 import multer from 'multer';
 import fs, { readdirSync } from 'fs';
 import path from 'path';
-import Class from '../models/Class';
 import Task, { ITask } from '../models/Task';
-import User, { IUser } from '../models/User';
-import Answer, { IAnswer } from '../models/Answer';
+import { IUser } from '../models/User';
+import Answer from '../models/Answer';
 
 const upload = multer({ dest: './data' });
 
@@ -211,6 +210,16 @@ TaskRouter.post('/resolveAnswers', (req, res) => {
       if (!task) return res.sendStatus(404);
       res.send(task.answers);
     });
+});
+
+TaskRouter.post('/saveMarks', async (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
+
+  for (const i of Object.entries(req.body)) {
+    await Answer.updateOne({ _id: i[0] }, { mark: i[1] as number });
+  }
+
+  res.sendStatus(200);
 });
 
 function isTaskAnsweredByUser(task: ITask, user: IUser): boolean {
