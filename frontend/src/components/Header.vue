@@ -8,7 +8,7 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown v-if="!!user.username" right>
           <template #button-content>
-            {{ user.username }} {{ user.name || user.lastname ? ` | ${user.name} ${user.lastname}` : '' }}
+            {{ user.name || user.lastname ? `${user.name} ${user.lastname} | ` : '' }} {{ user.username }}
           </template>
           <b-dropdown-item to="/profile"> Профиль </b-dropdown-item>
           <b-dropdown-item @click="logout"> Выйти </b-dropdown-item>
