@@ -198,6 +198,7 @@
           <a @click="revealedAnswer = revealedAnswer == item.user._id ? '' : item.user._id" :href="`#`"
             >{{ item.user.name }} {{ item.user.lastname }} ({{ item.user.class.num }} {{ item.user.class.liter }})</a
           >
+          {{ !!item.mark ? '[Оценено]' : '' }}
           <template v-if="revealedAnswer == item.user._id">
             <br />
             <ul>
@@ -449,6 +450,17 @@ export default class TaskManagement extends Vue implements IBVModal {
   resolveAnswers() {
     resolveAnswers(this.showTask._id).then(async response => {
       this.answers = await response.json();
+      this.answers.sort((a, b) => {
+        if (!!a.mark == !!b.mark) {
+          return 0;
+        }
+        if (!!a.mark && !b.mark) {
+          return 1;
+        }
+        if (!a.mark && !!b.mark) {
+          return -1;
+        }
+      });
     });
   }
 
