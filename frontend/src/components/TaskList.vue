@@ -22,6 +22,18 @@
       </li>
     </ul>
 
+    <span v-if="markedTasks.length != 0">Оцененные задания:</span>
+
+    <ul>
+      <li v-for="item in markedTasks" :key="item._id">
+        <a :href="`/profile/student/tasks/${item._id}`"
+          >{{ item.title }}
+          {{ item.files.length == 0 ? '' : `(${item.files.length} файл${quantitySuffix(item.files.length)})` }}
+          {{ `[${getTaskAnsweredByUser(item).mark}]` }}</a
+        >
+      </li>
+    </ul>
+
     <b-modal
       id="modal-info"
       ref="modal-info"
@@ -45,10 +57,14 @@
           }}</a>
         </li>
       </ul>
-      <span v-if="isTaskAnsweredByUser(showTask)">Ответ на это задание уже дан!</span>
+      <span v-if="!!getTaskAnsweredByUser(showTask)">Ответ на это задание уже дан!</span>
+      <br />
+      <span v-if="!!getTaskAnsweredByUser(showTask) && !!getTaskAnsweredByUser(showTask).mark"
+        >Ваша оценка за это задание: {{ getTaskAnsweredByUser(showTask).mark }}</span
+      >
       <template #modal-footer="{ ok }">
         <b-button
-          :disabled="isTaskAnsweredByUser(showTask)"
+          :disabled="!!getTaskAnsweredByUser(showTask)"
           size="sm"
           variant="info"
           @click="$root.$emit('bv::show::modal', 'modal-addfile')"
@@ -103,6 +119,7 @@ export default class TaskList extends Vue implements IBVModal {
   tasks = [];
   unAnsweredTasks = [];
   answeredTasks = [];
+  markedTasks = [];
   showTask = {
     _id: '',
     title: '',
@@ -125,8 +142,10 @@ export default class TaskList extends Vue implements IBVModal {
   getTasks() {
     getTasks().then(async response => {
       this.tasks = await response.json();
-      this.unAnsweredTasks = this.tasks.filter(a => !this.isTaskAnsweredByUser(a));
-      this.answeredTasks = this.tasks.filter(a => this.isTaskAnsweredByUser(a));
+      this.unAnsweredTasks = this.tasks.filter(a => !this.getTaskAnsweredByUser(a));
+      this.answeredTasks = this.tasks.filter(a => !!this.getTaskAnsweredByUser(a));
+      this.markedTasks = this.answeredTasks.filter(a => !!this.getTaskAnsweredByUser(a).mark);
+      this.answeredTasks = this.answeredTasks.filter(a => !this.markedTasks.includes(a));
 
       if (this.$route.params.id) {
         this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
@@ -134,8 +153,8 @@ export default class TaskList extends Vue implements IBVModal {
     });
   }
 
-  isTaskAnsweredByUser(task) {
-    return task.answers.some(b => b.user.toString() == this.user._id);
+  getTaskAnsweredByUser(task) {
+    return task.answers.find(b => b.user.toString() == this.user._id.toString());
   }
 
   showInfoModal(item: Record<string, unknown>) {
