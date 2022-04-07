@@ -48,7 +48,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ['https://localhost:8080', 'http://localhost:8080'],
+    origin: ['https://localhost:8080', 'http://localhost:8080', 'http://localhost:3000', 'https://localhost:3000'],
     credentials: true,
     exposedHeaders: ['set-cookie'],
   }),
@@ -71,5 +71,5 @@ app.use('/api/tasks', TaskRouter);
 app.use('/api/files', FileRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server is running at ::${PORT}`);
+  console.log(`Server is running at localhost:${PORT}`);
 });

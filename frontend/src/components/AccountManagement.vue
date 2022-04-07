@@ -187,7 +187,7 @@
 
 <script lang="ts">
 import { Prop, Component, Vue } from 'vue-property-decorator';
-import { IBVModal, IUser } from '../services/interfaces';
+import { IBVModal, IUser, IClass, IExtendedClass } from '../services/interfaces';
 import { createAccount, transliterate, findAccounts, editAccount, resetPassword, getClasses } from '../services/utils';
 
 @Component
@@ -215,7 +215,7 @@ export default class AccountManagement extends Vue implements IBVModal {
     type: 0,
     name: '',
     lastname: '',
-    class: null,
+    class: '',
     subject: '',
   };
   readonly types = [
@@ -228,13 +228,13 @@ export default class AccountManagement extends Vue implements IBVModal {
   password = '';
   alreadyRegistered = false;
   accounts = null;
-  showAccount = {
+  showAccount: IUser = {
     _id: '',
     accountType: 0,
     name: '',
     lastname: '',
     username: '',
-    class: null,
+    class: '',
     subject: '',
   };
   isEditingShowAccount = false;
@@ -249,7 +249,8 @@ export default class AccountManagement extends Vue implements IBVModal {
   getClasses() {
     getClasses().then(async response => {
       this.classes = await response.json();
-      this.classes.forEach(el => {
+      this.classes.forEach(ell => {
+        const el = ell as IExtendedClass;
         el.text = `${el.num} ${el.liter}`;
         el.value = el._id;
       });
@@ -314,7 +315,7 @@ export default class AccountManagement extends Vue implements IBVModal {
     this.findAccounts(this.findForm);
   }
 
-  findAccounts(filter) {
+  findAccounts(filter: Record<string, unknown>) {
     findAccounts(filter).then(async response => {
       this.accounts = await response.json();
       this.isEditingShowAccount = false;
@@ -322,7 +323,7 @@ export default class AccountManagement extends Vue implements IBVModal {
     });
   }
 
-  showInfoModal(item: Record<string, unknown>) {
+  showInfoModal(item: IUser) {
     this.showAccount = item;
 
     this.$root.$emit('bv::show::modal', 'modal-info');

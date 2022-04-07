@@ -245,7 +245,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IBVModal, IUser } from '../services/interfaces';
+import { IBVModal, IUser, IClass, ITask, IExtendedTask, IAnswer } from '../services/interfaces';
 import {
   createTask,
   getClasses,
@@ -271,20 +271,21 @@ export default class TaskManagement extends Vue implements IBVModal {
     title: '',
     description: '',
     classes: [],
-    date: 0,
+    date: new Date(),
     time: '',
     files: [],
   };
   addFiles = [];
-  allClasses = [];
-  classes = [];
+  allClasses: IClass[] = [];
+  classes: Record<string, string | any> = [];
   tasks = [];
-  showTask = {
+  showTask: IExtendedTask = {
     _id: '',
     title: '',
     description: '',
     classes: [],
-    date: 0,
+    date: new Date(),
+    deadline: new Date(),
     time: '',
     files: [],
     answers: [],
@@ -294,9 +295,9 @@ export default class TaskManagement extends Vue implements IBVModal {
   };
   changeDeadlineForm = {
     time: '',
-    date: '',
+    date: new Date(),
   };
-  answers = [];
+  answers: IAnswer[] = [];
   revealedAnswer = '';
   hasUnsavedMarks = false;
   unsavedMarks = {};
@@ -315,7 +316,7 @@ export default class TaskManagement extends Vue implements IBVModal {
     const now = new Date();
     this.createForm.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     this.createForm.time = now.toLocaleTimeString('en-US', { hour12: false });
-    this.files = [];
+    this.createForm.files = [];
     this.getTeacherClasses();
   }
 
@@ -338,9 +339,10 @@ export default class TaskManagement extends Vue implements IBVModal {
 
   getTeacherClasses() {
     this.classes = [];
-    this.user.classes.forEach(el => {
-      const cl = this.allClasses.find(a => a._id == el);
-      if (cl) {
+    this.user.classes?.forEach(el => {
+      const cll = this.allClasses.find(a => (a as IClass)._id == el);
+      if (cll) {
+        const cl = cll as IClass;
         const x = {
           text: `${cl.num} ${cl.liter}`,
           value: cl._id,
@@ -354,7 +356,10 @@ export default class TaskManagement extends Vue implements IBVModal {
     await getTasks().then(async response => {
       this.tasks = await response.json();
       if (this.$route.params.id) {
-        this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
+        const x = this.tasks.find(a => (a as ITask)._id == this.$route.params.id);
+        if (x) {
+          this.showInfoModal(x);
+        }
       }
     });
   }
@@ -366,18 +371,21 @@ export default class TaskManagement extends Vue implements IBVModal {
     });
   }
 
-  showInfoModal(item: Record<string, unknown>) {
+  showInfoModal(item: ITask) {
     this.showTask = item;
     this.showTask.classesFormated = item.classes
       .map(a => {
-        const cl = this.allClasses.find(b => b._id == a);
-        return `<a href="/profile/teacher/journal/${a}">${cl.num} ${cl.liter}</a>`;
+        const cll = this.allClasses.find(b => (b as IClass)._id == a);
+        if (cll) {
+          const cl = cll as IClass;
+          return `<a href="/profile/teacher/journal/${a}">${cl.num} ${cl.liter}</a>`;
+        }
       })
       .join(', ');
     this.showTask.deadlineString = new Date(this.showTask.deadline).toLocaleString('ru-RU');
     this.showTask.totalStudents = 0;
-    for (item of this.allClasses.filter(a => this.showTask.classes.includes(a._id))) {
-      this.showTask.totalStudents += item.pupils.length;
+    for (const i of this.allClasses.filter(a => this.showTask.classes.includes((a as IClass)._id))) {
+      this.showTask.totalStudents += i.pupils.length;
     }
 
     this.$root.$emit('bv::show::modal', 'modal-info');
@@ -391,10 +399,13 @@ export default class TaskManagement extends Vue implements IBVModal {
     });
   }
 
-  removeFileFromTask(file) {
+  removeFileFromTask(file: string) {
     removeFileFromTask(this.showTask._id, file).then(async response => {
       await this.getTasks();
-      this.showTask = this.tasks.find(a => a._id == this.showTask._id);
+      const x = this.tasks.find(a => (a as ITask)._id == this.showTask._id);
+      if (x) {
+        this.showTask = x;
+      }
     });
   }
 
@@ -428,7 +439,10 @@ export default class TaskManagement extends Vue implements IBVModal {
       }
 
       await this.getTasks();
-      this.showTask = this.tasks.find(a => a._id == this.showTask._id);
+      const x = this.tasks.find(a => (a as ITask)._id == this.showTask._id);
+      if (x) {
+        this.showTask = x;
+      }
     });
   }
 
@@ -442,7 +456,10 @@ export default class TaskManagement extends Vue implements IBVModal {
     changeTaskDeadline(this.showTask._id, new FormData(this.$refs.changeDeadlineForm as HTMLFormElement)).then(
       async response => {
         await this.getTasks();
-        this.showTask = this.tasks.find(a => a._id == this.showTask._id);
+        const x = this.tasks.find(a => (a as ITask)._id == this.showTask._id);
+        if (x) {
+          this.showTask = x;
+        }
       },
     );
   }
@@ -460,11 +477,12 @@ export default class TaskManagement extends Vue implements IBVModal {
         if (!a.mark && !!b.mark) {
           return -1;
         }
+        return 0;
       });
     });
   }
 
-  setMark(mark, answer) {
+  setMark(mark: number, answer: IAnswer) {
     this.hasUnsavedMarks = true;
     this.$set(this.unsavedMarks, answer._id, mark);
   }

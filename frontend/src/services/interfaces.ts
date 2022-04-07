@@ -5,11 +5,59 @@ export enum EAccountType {
   Admin = 3,
 }
 export interface IUser {
+  _id: string;
   username: string;
   name: string;
   lastname: string;
   subject: string;
-  type: EAccountType;
+  password?: string;
+  accountType: EAccountType;
+  class: string;
+  classes?: string[];
+}
+
+export interface IExtendedUser extends IUser {
+  availableClasses?: string[];
+}
+export interface IAnswer {
+  _id: string;
+  user: string;
+  task: string;
+  files: string[];
+  mark: number;
+}
+
+export interface IClass {
+  _id: string;
+  num: number;
+  liter: string;
+  pupils: string[];
+  tasks?: string[];
+  teachers?: string[];
+}
+
+export interface IExtendedClass extends IClass {
+  text: string;
+  value: string;
+}
+
+export interface ITask {
+  _id: string;
+  title: string;
+  description: string;
+  deadline: Date;
+  classes: string[];
+  teacher?: string;
+  files: string[];
+  answers: string[];
+}
+
+export interface IExtendedTask extends ITask {
+  date?: Date;
+  time?: string;
+  deadlineString?: string;
+  classesFormated?: string;
+  totalStudents?: number;
 }
 
 import VueRouter, { Route } from 'vue-router';

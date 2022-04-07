@@ -84,7 +84,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IBVModal, IUser } from '../services/interfaces';
+import { IBVModal, IUser, IClass, IExtendedClass, IExtendedUser } from '../services/interfaces';
 import { findAccounts, getClasses, addClass, removeClassFromTeacher } from '../services/utils';
 
 @Component
@@ -92,8 +92,8 @@ export default class TeacherManagement extends Vue implements IBVModal {
   @Prop(Object) user!: IUser;
 
   classes = [];
-  accounts = null;
-  showAccount = {
+  accounts = [];
+  showAccount: IExtendedUser = {
     _id: '',
     accountType: 0,
     name: '',
@@ -102,48 +102,52 @@ export default class TeacherManagement extends Vue implements IBVModal {
     subject: '',
     classes: [],
     availableClasses: [],
+    class: '',
   };
-  addClassSelection = null;
+  addClassSelection = '';
 
-  mounted() {
+  mounted(): void {
     this.getClasses();
     this.findAccounts();
   }
 
-  getClasses() {
-    return getClasses().then(async response => {
+  getClasses(): void {
+    getClasses().then(async response => {
       this.classes = await response.json();
-      this.classes.forEach(el => {
+      this.classes.forEach(ell => {
+        const el = ell as IExtendedClass;
         el.text = `${el.num} ${el.liter}`;
         el.value = el._id;
       });
     });
   }
 
-  findAccounts() {
-    return findAccounts({
+  findAccounts(): void {
+    findAccounts({
       type: 1,
     }).then(async response => {
       this.accounts = await response.json();
     });
   }
 
-  showInfoModal(item: Record<string, unknown>) {
+  showInfoModal(item: IUser): void {
     this.showAccount = item;
-    this.showAccount.availableClasses = this.classes.filter(a => !this.showAccount.classes.includes(a._id));
+    this.showAccount.availableClasses = this.classes.filter(
+      a => !this.showAccount.classes?.includes((a as IClass)._id),
+    );
 
     this.$root.$emit('bv::show::modal', 'modal-info');
   }
 
-  showClassesInfo() {
+  showClassesInfo(): void {
     this.$root.$emit('bv::show::modal', 'modal-classes');
   }
 
-  resetAddClassModal() {
-    this.addClassSelection = null;
+  resetAddClassModal(): void {
+    this.addClassSelection = '';
   }
 
-  handleAddClassModalOk(bvModalEvt: Event) {
+  handleAddClassModalOk(bvModalEvt: Event): void {
     bvModalEvt.preventDefault();
 
     if (!(this.$refs.addClassForm as HTMLFormElement).reportValidity()) {
@@ -153,18 +157,28 @@ export default class TeacherManagement extends Vue implements IBVModal {
     addClass(this.showAccount._id, this.addClassSelection).then(async () => {
       await this.findAccounts();
       await this.getClasses();
-      this.showAccount = this.accounts.find(a => a._id == this.showAccount._id);
-      this.showAccount.availableClasses = this.classes.filter(a => !this.showAccount.classes.includes(a._id));
-      this.$root.$emit('bv::hide::modal', 'modal-add-class');
+      const x = this.accounts.find(a => (a as IUser)._id == this.showAccount._id);
+      if (x) {
+        this.showAccount = x;
+        this.showAccount.availableClasses = this.classes.filter(
+          a => !this.showAccount.classes?.includes((a as IClass)._id),
+        );
+        this.$root.$emit('bv::hide::modal', 'modal-add-class');
+      }
     });
   }
 
-  removeClassFromTeacher(id: string) {
+  removeClassFromTeacher(id: string): void {
     removeClassFromTeacher(this.showAccount._id, id).then(async () => {
       await this.findAccounts();
       await this.getClasses();
-      this.showAccount = this.accounts.find(a => a._id == this.showAccount._id);
-      this.showAccount.availableClasses = this.classes.filter(a => !this.showAccount.classes.includes(a._id));
+      const x = this.accounts.find(a => (a as IUser)._id == this.showAccount._id);
+      if (x) {
+        this.showAccount = x;
+        this.showAccount.availableClasses = this.classes.filter(
+          a => !this.showAccount.classes?.includes((a as IClass)._id),
+        );
+      }
     });
   }
 }

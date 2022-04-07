@@ -105,7 +105,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IBVModal, IUser } from '../services/interfaces';
+import { IBVModal, IUser, ITask, IClass, IAnswer, IExtendedTask } from '../services/interfaces';
 import { getTasks, quantitySuffix, addAnswer } from '../services/utils';
 
 function getOut() {
@@ -120,15 +120,14 @@ export default class TaskList extends Vue implements IBVModal {
   unAnsweredTasks = [];
   answeredTasks = [];
   markedTasks = [];
-  showTask = {
+  showTask: IExtendedTask = {
     _id: '',
     title: '',
     description: '',
     classes: [],
-    date: 0,
-    time: '',
     files: [],
     answers: [],
+    deadline: new Date(),
     deadlineString: '',
   };
   addFiles = [];
@@ -144,20 +143,27 @@ export default class TaskList extends Vue implements IBVModal {
       this.tasks = await response.json();
       this.unAnsweredTasks = this.tasks.filter(a => !this.getTaskAnsweredByUser(a));
       this.answeredTasks = this.tasks.filter(a => !!this.getTaskAnsweredByUser(a));
-      this.markedTasks = this.answeredTasks.filter(a => !!this.getTaskAnsweredByUser(a).mark);
+      this.markedTasks = this.answeredTasks.filter(
+        a => !!this.getTaskAnsweredByUser(a) && !!this.getTaskAnsweredByUser(a).mark,
+      );
       this.answeredTasks = this.answeredTasks.filter(a => !this.markedTasks.includes(a));
 
       if (this.$route.params.id) {
-        this.showInfoModal(this.tasks.find(a => a._id == this.$route.params.id));
+        const x = this.tasks.find(a => (a as ITask)._id == this.$route.params.id);
+        if (x) {
+          this.showInfoModal(x);
+        }
       }
     });
   }
 
-  getTaskAnsweredByUser(task) {
-    return task.answers.find(b => b.user.toString() == this.user._id.toString());
+  getTaskAnsweredByUser(task: ITask): IAnswer {
+    return task.answers.find(
+      b => (b as unknown as IAnswer).user.toString() == this.user._id.toString(),
+    ) as unknown as IAnswer;
   }
 
-  showInfoModal(item: Record<string, unknown>) {
+  showInfoModal(item: ITask) {
     this.showTask = item;
     this.showTask.deadlineString = new Date(this.showTask.deadline).toLocaleString('ru-RU');
 

@@ -74,3 +74,6 @@ mongodb_tmp/
 
 # stored files
 backend/data
+
+#builds
+backend/build

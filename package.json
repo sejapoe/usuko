@@ -3,11 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "frontend": "cd frontend && npm run serve",
-    "backend": "cd backend && npm run start:dev",
+    "frontend:dev": "cd frontend && npm run serve",
+    "frontend:prod": "serve -s frontend/dist",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend && npm run start:dev",
+    "backend:prod": "node backend/build/src/index.js",
+    "backend:build": "cd backend && npm run build",
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run --silent start:dev",
-    "start:dev": "concurrently --kill-others -n 'frontend,backend,mongo' -c 'blue,red,green' \"npm run frontend\" \"npm run backend\" \"npm run mongo\"",
-    "mongo": "mongod --dbpath mongodb_tmp --logappend --logpath /dev/null"
+    "start:dev": "concurrently --kill-others -n 'frontend,backend,mongo' -c 'blue,red,green' \"npm run frontend:dev\" \"npm run backend:dev\" \"npm run mongo\"",
+    "start:prod": "concurrently --kill-others -n 'frontend,backend,mongo' -c 'blue,red,green' \"npm run frontend:prod\" \"npm run backend:prod\" \"npm run mongo\"",
+    "mongo": "mongod --dbpath mongodb_tmp --logappend --logpath /dev/null",
+    "build": "npm run backend:build && npm run frontend:build"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -23,6 +29,7 @@
   },
   "devDependencies": {
     "concurrently": "^7.0.0",
-    "if-env": "^1.0.4"
+    "if-env": "^1.0.4",
+    "serve": "^13.0.2"
   }
 }

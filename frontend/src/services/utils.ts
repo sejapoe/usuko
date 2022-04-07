@@ -5,8 +5,13 @@ export function quantitySuffix(count: number): string {
 }
 
 export async function getCurrentUser() {
-  const response = await fetch('/api/user');
-  return await response.json();
+  await fetch('/api/user')
+    .then(async response => {
+      return await response.json();
+    })
+    .catch(() => {
+      return {};
+    });
 }
 
 export async function login(form: Record<string, unknown>): Promise<Response> {

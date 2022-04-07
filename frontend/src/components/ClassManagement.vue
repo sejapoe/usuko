@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IBVModal, IUser } from '../services/interfaces';
+import { IBVModal, IUser, IClass } from '../services/interfaces';
 import { createClass, getClasses, deleteClass } from '../services/utils';
 
 @Component
@@ -69,7 +69,7 @@ export default class ClassManagement extends Vue implements IBVModal {
     liter: '',
   };
   classes = [];
-  showClass = {
+  showClass: IClass = {
     _id: '',
     num: 0,
     liter: '',
@@ -107,7 +107,7 @@ export default class ClassManagement extends Vue implements IBVModal {
     });
   }
 
-  showInfoModal(item: Record<string, unknown>) {
+  showInfoModal(item: IClass) {
     this.showClass = item;
 
     this.$root.$emit('bv::show::modal', 'modal-info');
