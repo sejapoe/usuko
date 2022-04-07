@@ -10,7 +10,7 @@
         >
           <b-table sticky-header="90%" :items="item.marks" :fields="fields" table-variant="dark" borderless fixed>
             <template #cell(task)="data">
-              <a :href="`/profile/students/tasks/${data.value._id}`">{{ data.value.title }}</a>
+              <a :href="`/profile/student/tasks/${data.value._id}`">{{ data.value.title }}</a>
             </template>
           </b-table>
           <template #footer>
