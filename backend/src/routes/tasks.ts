@@ -227,7 +227,7 @@ TaskRouter.get('/getDiary', async (req, res) => {
 
   Answer.find({
     user: (req.user as IUser)._id,
-    mark: { $exists: true, $ne: null },
+    mark: { $exists: true },
   })
     .populate({ path: 'task', populate: { path: 'teacher' } })
     .then(answers => {
