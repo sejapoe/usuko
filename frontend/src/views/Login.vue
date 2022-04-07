@@ -27,9 +27,7 @@
               />
             </b-form-group>
 
-            <b-button type="submit" variant="dark" block>
-              Войти
-            </b-button>
+            <b-button type="submit" variant="dark" block> Войти </b-button>
 
             <b-form-checkbox id="checkbox-1" v-model="form.remember" name="checkbox-1">
               Запомнить меня
