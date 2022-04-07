@@ -275,3 +275,7 @@ export async function saveMarks(marks: Record<string, number>) {
     body: JSON.stringify(marks),
   });
 }
+
+export async function getDiary() {
+  return await fetch('/api/tasks/getDiary');
+}
