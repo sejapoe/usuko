@@ -222,6 +222,37 @@ TaskRouter.post('/saveMarks', async (req, res) => {
   res.sendStatus(200);
 });
 
+TaskRouter.get('/getDiary', async (req, res) => {
+  if ((req.user as IUser).accountType != 0) return res.sendStatus(403);
+
+  Answer.find({
+    user: (req.user as IUser)._id,
+    mark: { $exists: true, $ne: null },
+  })
+    .populate({ path: 'task', populate: { path: 'teacher' } })
+    .then(answers => {
+      if (!answers) return res.send([]);
+      const rs: Record<string, unknown>[] = [];
+      for (const answer of answers) {
+        const task = answer.task as unknown as ITask;
+        const teacher = task.teacher as unknown as IUser;
+        let ex = rs.find(a => (a.teacher as IUser)._id == teacher._id);
+        if (!ex) {
+          rs.push({
+            teacher,
+            marks: [],
+          });
+          ex = rs[rs.length - 1];
+        }
+        (ex.marks as Record<string, number | ITask>[]).push({
+          task,
+          mark: answer.mark,
+        });
+      }
+      res.send(rs);
+    });
+});
+
 function isTaskAnsweredByUser(task: ITask, user: IUser): boolean {
   return task.answers.some(b => b.user.toString() == user._id);
 }
