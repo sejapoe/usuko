@@ -278,8 +278,6 @@ TaskRouter.get('/getJournal', async (req, res) => {
         }
         x.marks.push({ mark: iterator.mark, task: (iterator.task as unknown as ITask)._id });
       }
-      console.log(formatedResult);
-
       res.send(formatedResult);
     });
 });

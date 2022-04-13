@@ -71,18 +71,10 @@ export default class Journal extends Vue implements IBVModal {
 </script>
 
 <style scoped>
-/* table {
-  border-collapse: separate;
-  border: 1px solid white;
-  border-spacing: 0;
-  width: 100%;
-} */
-
 .wrapper {
   overflow-x: auto;
   white-space: nowrap;
   margin-left: 15em;
-  /* width: 100%; */
 }
 
 table td {
