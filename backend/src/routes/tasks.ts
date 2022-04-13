@@ -5,6 +5,7 @@ import path from 'path';
 import Task, { ITask } from '../models/Task';
 import { IUser } from '../models/User';
 import Answer from '../models/Answer';
+import { ObjectId } from 'mongoose';
 
 const upload = multer({ dest: './data' });
 
@@ -250,6 +251,36 @@ TaskRouter.get('/getDiary', async (req, res) => {
         });
       }
       res.send(rs);
+    });
+});
+
+TaskRouter.get('/getJournal', async (req, res) => {
+  if ((req.user as IUser).accountType != 1) return res.sendStatus(403);
+
+  Answer.find({
+    mark: { $exists: true },
+  })
+    .populate({ path: 'task', match: { teacher: (req.user as IUser)._id } })
+    .populate({ path: 'user', select: 'name lastname' })
+    .then(answers => {
+      answers = answers.filter(a => !!a.task);
+      const formatedResult: Array<{ _id: ObjectId; fullname: string; marks: Array<{ mark: number; task: string }> }> =
+        [];
+      for (const iterator of answers) {
+        let x = formatedResult.find(a => a._id.toString() == (iterator.user as unknown as IUser)._id.toString());
+        if (!x) {
+          formatedResult.push({
+            _id: (iterator.user as unknown as IUser)._id,
+            fullname: `${(iterator.user as unknown as IUser).name}  ${(iterator.user as unknown as IUser).lastname}`,
+            marks: [],
+          });
+          x = formatedResult[formatedResult.length - 1];
+        }
+        x.marks.push({ mark: iterator.mark, task: (iterator.task as unknown as ITask)._id });
+      }
+      console.log(formatedResult);
+
+      res.send(formatedResult);
     });
 });
 

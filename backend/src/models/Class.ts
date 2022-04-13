@@ -13,7 +13,7 @@ export const ClassSchema = new Schema<IClass>(
     num: { type: Number, required: true },
     liter: String,
     tasks: [String],
-    pupils: [String],
+    pupils: { type: [String], ref: 'user' },
     teachers: [String],
   },
   {
