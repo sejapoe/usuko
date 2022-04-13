@@ -279,3 +279,7 @@ export async function saveMarks(marks: Record<string, number>) {
 export async function getDiary() {
   return await fetch('/api/tasks/getDiary');
 }
+
+export async function getJournal() {
+  return await fetch('/api/tasks/getJournal');
+}
