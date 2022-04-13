@@ -28,7 +28,7 @@ export default class Journal extends Vue implements IBVModal {
     { key: 'task', label: 'Задание' },
     { key: 'mark', label: 'Оценка' },
   ];
-  journal = [];
+  journal: Array<{ _id: string; fullname: string; marks: Array<{ mark: number; task: string }> }> = [];
 
   mounted(): void {
     this.getJournal();
