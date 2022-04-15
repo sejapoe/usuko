@@ -85,7 +85,7 @@
           </b-form-group>
 
           <b-form-group label="Логин">
-            <b-form-input v-model="findForm.login" placeholder="Придумайте логин" />
+            <b-form-input v-model="findForm.login" placeholder="Введите логин" />
           </b-form-group>
 
           <b-form-group label="Класс" v-if="findForm.type === 0">
