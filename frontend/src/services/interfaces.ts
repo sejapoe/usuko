@@ -60,6 +60,16 @@ export interface IExtendedTask extends ITask {
   totalStudents?: number;
 }
 
+export interface IMessage {
+  _id: string;
+  users: [string];
+  message: string;
+  attach?: string;
+  sender: string;
+  isReaded: boolean;
+  timestamp: Date;
+}
+
 import VueRouter, { Route } from 'vue-router';
 
 export interface IVueRouter {

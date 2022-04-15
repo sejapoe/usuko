@@ -1,6 +1,6 @@
 import express from 'express';
 import Message, { IMessage } from '../models/Message';
-import { IUser } from '../models/User';
+import User, { IUser } from '../models/User';
 
 const ChatRouter = express.Router();
 
@@ -52,10 +52,10 @@ ChatRouter.get('/getConversations', (req, res) => {
     users: { $in: (req.user as IUser)._id },
   }).then(async arrays => {
     const conversations = arrays.filter((a: string) => a != (req.user as IUser)._id.toString());
-    const completeConversations: Array<{ reciever: string; lastMessage: IMessage | null }> = [];
+    const completeConversations: Array<{ reciever: IUser | null; lastMessage: IMessage | null }> = [];
     for (const it of conversations) {
       completeConversations.push({
-        reciever: it,
+        reciever: await User.findById(it),
         lastMessage: await Message.findOne(
           {
             users: {

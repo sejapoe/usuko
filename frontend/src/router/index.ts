@@ -10,6 +10,7 @@ import TaskManagement from '@/components/TaskManagement.vue';
 import TaskList from '@/components/TaskList.vue';
 import Diary from '@/components/Diary.vue';
 import Journal from '@/components/Journal.vue';
+import Chat from '@/components/Chat.vue';
 
 Vue.use(VueRouter);
 
@@ -47,7 +48,7 @@ const routes: Array<RouteConfig> = [
         path: 'student/diary',
         component: Diary,
       },
-      { path: 'chat', component: ClassManagement },
+      { path: 'chat', component: Chat },
     ],
   },
   {

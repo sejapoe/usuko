@@ -283,3 +283,11 @@ export async function getDiary() {
 export async function getJournal() {
   return await fetch('/api/tasks/getJournal');
 }
+
+export async function getConversations() {
+  return await fetch('/api/chat/getConversations');
+}
+
+export async function getConversation(id: string) {
+  return await fetch(`/api/chat/getConversation?reciever=${id}`);
+}
