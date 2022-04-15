@@ -74,7 +74,7 @@ AccountsRouter.post('/find', function (req, res) {
   }
 
   if (req.body.class && req.body.type === 0) {
-    filterArr = { class: new ScreenedRegExp(req.body.class, 'i'), ...filterArr };
+    filterArr = { class: req.body.class, ...filterArr };
   }
 
   User.find(filterArr).then(users => {
