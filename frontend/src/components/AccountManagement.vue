@@ -68,7 +68,6 @@
         header-bg-variant="dark"
         body-bg-variant="dark"
         footer-bg-variant="dark"
-        @show="resetFindModal"
         @ok="handleFindModalOk"
       >
         <form ref="findForm">
@@ -298,15 +297,6 @@ export default class AccountManagement extends Vue implements IBVModal {
     if (this.createForm.generateLogin) {
       this.createForm.login = transliterate(this.createForm.lastname.toLowerCase());
     }
-  }
-
-  resetFindModal() {
-    this.findForm.type = -1;
-    this.findForm.name = '';
-    this.findForm.lastname = '';
-    this.findForm.login = '';
-    this.findForm.class = null;
-    this.findForm.subject = '';
   }
 
   handleFindModalOk(bvModalEvt: Event) {
